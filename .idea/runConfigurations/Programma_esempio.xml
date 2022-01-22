@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Programma_esempio" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="Tester" />
+    <module name="bacco-bacco-lamonica_es4_mfp" />
+    <option name="PROGRAM_PARAMETERS" value="test_file\programma_esempio" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

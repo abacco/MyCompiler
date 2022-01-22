@@ -1,0 +1,103 @@
+#*
+    scrivere un programma MyFun che
+    visualizzi un menu in cui un utente può scegliere l' operazione aritmetica da svolgere
+    richieda all'utente gli input (interi o double) necessari per svolgere l'operazione scelta
+    esegua l'operazione, restituisca il risultato e chieda se si vuol continuare
+    all'input 0 oppure 1 il programma  conclude oppure mostra il menu iniziale, rispettivamente.
+    N.B. si utilizzino almeno due funzioni. In generale, si cerchi di utilizzare tutte le caratteristiche del linguaggio.
+#
+
+bool flag := true ;
+integer opzione ;
+
+
+fun somma( real a, real b ) : real
+real result;
+result:= a + b;
+return result ;
+end fun;
+
+fun moltiplicazione( real a, real b ) : real
+return a * b;
+end fun;
+
+fun divisione( real a, real b ) : real
+real result := a / b ;
+return result ;
+end fun;
+
+fun divisioneInteri( integer a, integer b ) : integer
+integer result := a div b ;
+return result ;
+end fun;
+
+fun stampa_menu(): integer
+var ans := 0;
+
+?. '    MENU    ';
+?. 'Scegli l"operazione da eseguire :   ';
+?. '1. somma    2. moltiplicazione      3. divisione    4. divisione fra interi';
+
+% ans;
+return ans;
+
+end fun;
+
+
+main
+
+real input1, input2;
+real result;
+ans := no;
+
+while flag loop
+
+opzione := stampa_menu();
+
+
+if opzione > 0 and opzione <= 4
+then
+?. 'inserisci il primo valore';
+% input1;
+?. 'inserisci il secondo valore';
+% input2;
+
+if opzione=1 then
+	result := somma(input1, input2);
+end if;
+if opzione=2 then
+	result := moltiplicazione(input1, input2);
+end if;
+if opzione=3 then
+	result := divisione(input1, input2);
+end if;
+if opzione=4 then
+	result := divisioneInteri(input1, input2);
+end if;
+
+?. 'Il risultato è ' & result;
+end if;
+
+% ans 'vuoi continuare? (si/no):\t';
+if ans='si'
+then
+flag:=true;
+else
+flag:= false;
+end if;
+end loop;
+
+end main;
+
+
+
+
+
+
+
+
+
+
+
+
+
