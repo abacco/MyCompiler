@@ -1,8 +1,9 @@
 package Node.Declaration;
 
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
-public class VarDeclOp
+public class VarDeclOp extends SyntaxtNode
 {
     private final TypeOp type;
     private final IListInit listInit;
@@ -27,7 +28,7 @@ public class VarDeclOp
         return listInit;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 }

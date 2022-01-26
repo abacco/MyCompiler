@@ -1,9 +1,10 @@
 package Node.Statement;
 
 import Node.Expression.Expression;
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
-public class WriteStatOp implements Statement
+public class WriteStatOp extends SyntaxtNode implements Statement
 {
     public enum TypeWrite
     {
@@ -17,7 +18,7 @@ public class WriteStatOp implements Statement
 
     public WriteStatOp(TypeWrite t, Expression exp){ expression=exp; this.type=t;}
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 

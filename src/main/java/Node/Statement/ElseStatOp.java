@@ -1,11 +1,12 @@
 package Node.Statement;
 
 import Node.Declaration.VarDeclOp;
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
 import java.util.ArrayList;
 
-public class ElseStatOp
+public class ElseStatOp extends SyntaxtNode
 {
     private final ArrayList<VarDeclOp> listVar;
     private final ArrayList<Statement> listStat;
@@ -24,11 +25,11 @@ public class ElseStatOp
     }
 
     public ElseStatOp() {
-        this.listVar = null;
-        this.listStat = null;
+        this.listVar = new ArrayList<VarDeclOp>();
+        this.listStat = new ArrayList<Statement>();
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 

@@ -2,11 +2,12 @@ package Node.Statement;
 
 import Node.Expression.Expression;
 import Node.ID;
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
 import java.util.ArrayList;
 
-public class ReadStatOp implements Statement
+public class ReadStatOp extends SyntaxtNode implements Statement
 {
     private final ArrayList<ID> listId;
     private final Expression exp;
@@ -30,7 +31,7 @@ public class ReadStatOp implements Statement
         this.exp=exp;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 

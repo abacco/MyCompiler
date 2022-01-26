@@ -4,6 +4,6 @@ import Visitor.Visitor;
 
 public interface IListInit {
 
-    Object accept(Visitor visitor);
+    Object accept(Visitor visitor) throws Exception;
 
 }

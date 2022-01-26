@@ -8,7 +8,7 @@
 #
 
 bool flag := true ;
-integer opzione ;
+var opzione:=1 ;
 
 
 fun somma( real a, real b ) : real
@@ -48,7 +48,7 @@ main
 
 real input1, input2;
 real result;
-ans := no;
+var ans := 'no';
 
 while flag loop
 

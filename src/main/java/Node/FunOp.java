@@ -5,30 +5,37 @@ import Node.Declaration.TypeOp;
 import Node.Declaration.VarDeclOp;
 import Node.Statement.Statement;
 import Visitor.Visitor;
-import Visitor.XMLGenerator;
 
 import java.util.ArrayList;
 
-public class FunOp
+public class FunOp extends SyntaxtNode
 {
+    private final ID id;
     private final TypeOp type;
     private final ArrayList<VarDeclOp> listVarDecl;
     private final ParDeclListOp listParam;
     private final ArrayList<Statement> listStatement;
 
-    public FunOp(TypeOp type, ArrayList<VarDeclOp> listVarDecl, ParDeclListOp listParam, ArrayList<Statement> listStatement) {
+    public FunOp(ID id, TypeOp type, ArrayList<VarDeclOp> listVarDecl, ParDeclListOp listParam, ArrayList<Statement> listStatement) {
+        this.id=id;
         this.type = type;
         this.listVarDecl = listVarDecl;
         this.listParam = listParam;
         this.listStatement = listStatement;
     }
 
-    public FunOp(ArrayList<VarDeclOp> listVarDecl, ParDeclListOp listParam, ArrayList<Statement> listStatement) {
+
+    public FunOp(ID id, ArrayList<VarDeclOp> listVarDecl, ParDeclListOp listParam, ArrayList<Statement> listStatement) {
+        this.id=id;
         this.type = null;
         this.listVarDecl = listVarDecl;
         this.listParam = listParam;
         this.listStatement = listStatement;
     }
+    public ID getId() {
+    return id;
+}
+
 
     public TypeOp getType() {
         return type;
@@ -46,7 +53,7 @@ public class FunOp
         return listStatement;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 }

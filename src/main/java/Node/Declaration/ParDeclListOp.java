@@ -1,10 +1,11 @@
 package Node.Declaration;
 
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
 import java.util.ArrayList;
 
-public class ParDeclListOp
+public class ParDeclListOp extends SyntaxtNode
 {
     private final ArrayList<ParDeclOp> listParDecl;
 
@@ -19,7 +20,7 @@ public class ParDeclListOp
         this.listParDecl = new ArrayList<ParDeclOp>();
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 }

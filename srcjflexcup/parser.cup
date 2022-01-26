@@ -107,9 +107,9 @@ INTEGER_CONST:integerConst  {: RESULT = new Integer_Const(integerConst); :}
 | STRING_CONST:stringConst  {: RESULT = new String_Const(stringConst); :};
 
 Fun ::= FUN ID:id LPAR ParamDeclList:listPar RPAR COLON Type:t
-		VarDeclList:listVar StatList:listStat END FUN SEMI      {:RESULT = new FunOp(t, listVar, listPar, listStat);:}
-	| FUN ID LPAR ParamDeclList:listPar RPAR
-		VarDeclList:listVar StatList:listStat END FUN SEMI {:RESULT = new FunOp(listVar, listPar, listStat);:};
+		VarDeclList:listVar StatList:listStat END FUN SEMI      {:RESULT = new FunOp(new ID(id),t, listVar, listPar, listStat);:}
+	| FUN ID:id LPAR ParamDeclList:listPar RPAR
+		VarDeclList:listVar StatList:listStat END FUN SEMI {:RESULT = new FunOp(new ID(id),listVar, listPar, listStat);:};
 
 
 ParamDeclList ::= /*empty */        {:RESULT = new ParDeclListOp();:}
@@ -118,8 +118,8 @@ ParamDeclList ::= /*empty */        {:RESULT = new ParDeclListOp();:}
 NonEmptyParamDeclList ::= ParDecl:decl                 {: RESULT = new ArrayList<ParDeclOp>(); RESULT.add(decl); :}
 	| NonEmptyParamDeclList:listPar COMMA ParDecl:decl {: listPar.add(decl); RESULT = listPar; :};
 
-ParDecl ::= Type ID:id {:RESULT = new ParDeclOp(ParDeclOp.ParType.IN, id);:}
-	| OUT Type ID:id   {:RESULT = new ParDeclOp(ParDeclOp.ParType.OUT, id);:};
+ParDecl ::= Type:t ID:id {:RESULT = new ParDeclOp(ParDeclOp.ParType.IN,t, id);:}
+	| OUT Type:t ID:id   {:RESULT = new ParDeclOp(ParDeclOp.ParType.OUT,t, id);:};
 
 StatList ::= /* empty */            {: RESULT = new ArrayList<Statement>(); :}
 	 | Stat:st StatList:listStat {: listStat.add(st); RESULT = listStat; :};
@@ -133,7 +133,7 @@ Stat ::= IfStat:stat SEMI   {:RESULT = stat;:}
 	| RETURN Expr:exp SEMI  {:RESULT= new ReturnExpOp(exp);:};
 
 
-IfStat ::= IF Expr:exp THEN VarDeclList:listVar StatList:statList Else END IF {:RESULT = new IfStatOp(exp, listVar, statList);:};
+IfStat ::= IF Expr:exp THEN VarDeclList:listVar StatList:statList Else:els END IF {:RESULT = new IfStatOp(exp, listVar, statList, els);:};
 
 Else ::= /* empty */ {:RESULT = new ElseStatOp();:}
 	| ELSE VarDeclList:listVar  StatList:listStat {:RESULT = new ElseStatOp(listVar, listStat);:};
@@ -152,15 +152,15 @@ WriteStat ::=  WRITE  Expr:exp  {: RESULT = new WriteStatOp(WriteStatOp.TypeWrit
 	| WRITEB  Expr:exp          {: RESULT = new WriteStatOp(WriteStatOp.TypeWrite.WRITEB,exp);:};
 
 
-AssignStat ::=  ID:id ASSIGN Expr:expr {: RESULT = new AssignStatOp(id, expr);:};
+AssignStat ::=  ID:id ASSIGN Expr:expr {: RESULT = new AssignStatOp(new ID(id), expr);:};
 
-CallFun ::= ID:id LPAR ExprList:exprList RPAR {: RESULT = new CallFunOp(id, exprList); :}
-	| ID:id  LPAR RPAR                        {: RESULT = new CallFunOp(id); :} ;
+CallFun ::= ID:id LPAR ExprList:exprList RPAR {: RESULT = new CallFunOp(new ID(id), exprList); :}
+	| ID:id  LPAR RPAR                        {: RESULT = new CallFunOp(new ID(id)); :} ;
 
 ExprList ::= Expr:expr                        {: RESULT = new ArrayList<Expression>(); RESULT.add(expr); :}
 	| Expr:expr COMMA ExprList:exprList       {: exprList.add(expr); RESULT = exprList; :}
-	| OUTPAR ID:id                            {: RESULT = new ArrayList<Expression>(); RESULT.add(new ID(id)); :}
-    | OUTPAR ID:id COMMA ExprList:exprList    {: exprList.add(new ID(id)); RESULT = exprList; :};
+	| OUTPAR ID:id                            {: RESULT = new ArrayList<Expression>(); ID idPar =new ID(id); idPar.setOutPar(true);  RESULT.add(idPar); :}
+    | OUTPAR ID:id COMMA ExprList:exprList    {: ID idPar =new ID(id); idPar.setOutPar(true); exprList.add(idPar); RESULT = exprList; :};
 
 Expr ::=
       TRUE                       {: RESULT = new Boolean_Const(true); :}

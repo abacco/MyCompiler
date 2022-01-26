@@ -1,9 +1,10 @@
 package Node.Statement;
 
 import Node.Expression.Expression;
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
-public class ReturnExpOp implements Statement
+public class ReturnExpOp extends SyntaxtNode implements Statement
 {
     private final Expression expression;
 
@@ -11,7 +12,7 @@ public class ReturnExpOp implements Statement
         this.expression = expression;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 

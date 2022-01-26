@@ -19,7 +19,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class XMLGenerator implements Visitor{
+public class XMLGenerator  implements Visitor{
 
     private Document document;
 
@@ -30,7 +30,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(ProgramOp program) {
+    public Object visit(ProgramOp program) throws Exception {
         Element programElement = document.createElement("ProgramOp");
 
         for (VarDeclOp el: program.getListVarDecl()){
@@ -50,7 +50,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(MainOp main) {
+    public Object visit(MainOp main) throws Exception {
         Element mainElement = document.createElement("MainOp");
 
         for (VarDeclOp el: main.getListVarDecl()){
@@ -66,7 +66,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(VarDeclOp varDecl) {
+    public Object visit(VarDeclOp varDecl) throws Exception {
 
         Element varElement = document.createElement("VarDeclOp");
         Element listIn = (Element) varDecl.getListInit().accept(this);
@@ -89,7 +89,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(IdListInitOp idListInit) {
+    public Object visit(IdListInitOp idListInit) throws Exception {
         Element idListElement = document.createElement("IdListInitOp");
 
         for (String key: idListInit.getList().keySet()){
@@ -156,7 +156,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(FunOp fun) {
+    public Object visit(FunOp fun) throws Exception {
         Element funElement = document.createElement("FunOp");
         if(fun.getType()!=null)
         {
@@ -180,7 +180,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(ParDeclListOp paramDeclList) {
+    public Object visit(ParDeclListOp paramDeclList) throws Exception {
         Element parListElement = document.createElement("ParDeclListOp");
 
         for (ParDeclOp el: paramDeclList.getListParDecl()){
@@ -204,10 +204,10 @@ public class XMLGenerator implements Visitor{
 
     /*                              Statement                   */
     @Override
-    public Object visit(AssignStatOp stat) {
+    public Object visit(AssignStatOp stat) throws Exception {
         Element assignElement = document.createElement("AssignStatOp");
         Element id = document.createElement("ID");
-        id.setAttribute("name", stat.getId());
+        id.setAttribute("name", stat.getId().getName());
 
         Element expression = (Element) stat.getExpression().accept(this);
 
@@ -218,7 +218,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(IfStatOp ifStat) {
+    public Object visit(IfStatOp ifStat) throws Exception {
         Element ifElement = document.createElement("IfStatOp");
 
         Element expression = (Element) ifStat.getExpression().accept(this);
@@ -236,7 +236,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(ElseStatOp elseStat) {
+    public Object visit(ElseStatOp elseStat) throws Exception {
         Element elseElement = document.createElement("ElseStatOp");
 
         for (VarDeclOp el: elseStat.getListVar()){
@@ -251,7 +251,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(WhileStatOp whileStat) {
+    public Object visit(WhileStatOp whileStat) throws Exception {
         Element whileElement = document.createElement("WhileStatOp");
 
         Element expression = (Element) whileStat.getExpression().accept(this);
@@ -269,7 +269,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(ReadStatOp readStat) {
+    public Object visit(ReadStatOp readStat) throws Exception {
         Element read = document.createElement("ReadStatOp");
         for (ID el: readStat.getListId()){
             Element e = (Element) el.accept(this);
@@ -284,7 +284,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(WriteStatOp writeStat) {
+    public Object visit(WriteStatOp writeStat) throws Exception {
         Element writeElement = document.createElement(writeStat.getType().toString());
         Element expression = (Element) writeStat.getExpression().accept(this);
         writeElement.appendChild(expression);
@@ -293,10 +293,10 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(CallFunOp callFun) {
+    public Object visit(CallFunOp callFun) throws Exception {
         Element writeElement = document.createElement("CallFunOp");
         Element id = document.createElement("ID");
-        id.setAttribute("name", callFun.getId());
+        id.setAttribute("name", callFun.getId().getName());
 
         for (Expression el: callFun.getListExpression()){
             Element e = (Element) el.accept(this);
@@ -317,7 +317,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(BinaryOperation binaryOperation) {
+    public Object visit(BinaryOperation binaryOperation) throws Exception {
         Element binaryOp = document.createElement(binaryOperation.getType().toString());
         Element exp1 = (Element) binaryOperation.getE1().accept(this);
         Element exp2 = (Element) binaryOperation.getE2().accept(this);
@@ -327,8 +327,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(UnaryOperation unaryOperation)
-    {
+    public Object visit(UnaryOperation unaryOperation) throws Exception {
         Element  unaryOp = document.createElement(unaryOperation.getType().toString());
         Element exp1 = (Element) unaryOperation.getE1().accept(this);
 
@@ -338,7 +337,7 @@ public class XMLGenerator implements Visitor{
     }
 
     @Override
-    public Object visit(ReturnExpOp returnExpOp) {
+    public Object visit(ReturnExpOp returnExpOp) throws Exception {
         Element returnElement = document.createElement("ReturnExpOp");
         Element expression = (Element) returnExpOp.getExpression().accept(this);
         returnElement.appendChild(expression);

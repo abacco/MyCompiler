@@ -1,14 +1,22 @@
 package Node.Statement;
 
 import Node.Expression.Expression;
+import Node.ID;
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
-public class AssignStatOp implements Statement
+public class AssignStatOp extends SyntaxtNode implements Statement
 {
-    private final String id;
+    private final ID id;
     private final Expression expression;
 
-    public String getId() {
+
+    public AssignStatOp(ID id, Expression expression) {
+        this.id = id;
+        this.expression = expression;
+    }
+
+    public ID getId() {
         return id;
     }
 
@@ -16,11 +24,8 @@ public class AssignStatOp implements Statement
         return expression;
     }
 
-    public AssignStatOp(String id, Expression exp) {this.id=id; this.expression=exp;}
-
-    public Object accept(Visitor visitor) {
+    @Override
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
-
-
 }

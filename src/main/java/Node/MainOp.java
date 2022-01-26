@@ -6,7 +6,7 @@ import Visitor.Visitor;
 
 import java.util.ArrayList;
 
-public class MainOp
+public class MainOp extends SyntaxtNode
 {
     private final ArrayList<VarDeclOp> listVarDecl;
     private final ArrayList<Statement> listStatement;
@@ -24,7 +24,7 @@ public class MainOp
         return listStatement;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 }

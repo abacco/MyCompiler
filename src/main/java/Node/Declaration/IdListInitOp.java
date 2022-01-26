@@ -1,11 +1,12 @@
 package Node.Declaration;
 
 import Node.Expression.Expression;
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
 import java.util.HashMap;
 
-public class IdListInitOp implements IListInit{
+public class IdListInitOp extends SyntaxtNode implements IListInit{
     private HashMap<String, Expression> list;
 
     public IdListInitOp(HashMap<String, Expression> list) {
@@ -24,7 +25,7 @@ public class IdListInitOp implements IListInit{
         return list;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 

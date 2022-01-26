@@ -1,4 +1,8 @@
 import Node.ProgramOp;
+import Semantic.Enum.ReturnType;
+import Semantic.TreeSymbolTable;
+import Visitor.SemanticVisitor;
+import Visitor.SymbolTableVisitor;
 import Visitor.XMLGenerator;
 
 import java_cup.runtime.Symbol;
@@ -39,13 +43,21 @@ public class Tester
 
         XMLGenerator xml = new XMLGenerator();
         Document doc = (Document) prog.accept(xml);
-
+        /*
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         DOMSource domSource = new DOMSource((Node) doc);
         StreamResult streamResult = new StreamResult(new File(System.getProperty("user.dir")+"\\albero_sintattico.xml"));
         transformer.transform(domSource, streamResult);
+        */
+        SymbolTableVisitor visitor = new SymbolTableVisitor();
+        TreeSymbolTable symbolTable = (TreeSymbolTable) prog.accept(visitor);
 
+        symbolTable.stampTree();
+        /*
+        SemanticVisitor semanticVisitor = new SemanticVisitor(symbolTable);
+        ReturnType returnType = (ReturnType) prog.accept(semanticVisitor);
+        */
     }
 
 }

@@ -1,8 +1,9 @@
 package Node.Expression;
 
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
-public class UnaryOperation implements Expression
+public class UnaryOperation extends SyntaxtNode implements Expression
 {
     public enum UnaryOperationType
     {
@@ -23,7 +24,7 @@ public class UnaryOperation implements Expression
 
     public UnaryOperation(UnaryOperationType type, Expression e1){ this.type=type; this.e1=e1;}
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 

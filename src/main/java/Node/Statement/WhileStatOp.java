@@ -2,11 +2,12 @@ package Node.Statement;
 
 import Node.Declaration.VarDeclOp;
 import Node.Expression.Expression;
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
 import java.util.ArrayList;
 
-public class WhileStatOp implements Statement
+public class WhileStatOp extends SyntaxtNode implements Statement
 {
     private final Expression expression;
     private final ArrayList<VarDeclOp> varDeclListOp;
@@ -30,7 +31,7 @@ public class WhileStatOp implements Statement
         this.listStatement = listStatement;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 

@@ -1,8 +1,9 @@
 package Node.Expression;
 
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
-public class BinaryOperation implements Expression
+public class BinaryOperation extends SyntaxtNode implements Expression
 {
     public enum BinaryOperationType
     {
@@ -40,7 +41,7 @@ public class BinaryOperation implements Expression
 
     public BinaryOperation(BinaryOperationType type, Expression e1, Expression e2){ this.type=type; this.e1=e1; this.e2=e2;}
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 

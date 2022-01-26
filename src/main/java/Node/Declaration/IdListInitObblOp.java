@@ -2,11 +2,12 @@ package Node.Declaration;
 
 import Node.Constant.IConstant;
 import Node.Expression.Expression;
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
 import java.util.HashMap;
 
-public class IdListInitObblOp implements IListInit
+public class IdListInitObblOp extends SyntaxtNode implements IListInit
 {
     private HashMap<String, IConstant> list;
 

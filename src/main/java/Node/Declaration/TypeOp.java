@@ -1,8 +1,9 @@
 package Node.Declaration;
 
+import Node.SyntaxtNode;
 import Visitor.Visitor;
 
-public class TypeOp
+public class TypeOp extends SyntaxtNode
 {
     public enum Type
     {

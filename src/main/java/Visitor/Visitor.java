@@ -16,15 +16,15 @@ import java.util.ArrayList;
 
 public interface Visitor {
 
-    Object visit(ProgramOp Program);
+    Object visit(ProgramOp Program) throws Exception;
 
-    Object visit(MainOp Main);
+    Object visit(MainOp Main) throws Exception;
 
-    Object visit(VarDeclOp VarDecl);
+    Object visit(VarDeclOp VarDecl) throws Exception;
 
     Object visit(TypeOp Type);
 
-    Object visit(IdListInitOp IdListInit);
+    Object visit(IdListInitOp IdListInit) throws Exception;
 
     Object visit(IdListInitObblOp IdListInitObbl);
 
@@ -36,31 +36,31 @@ public interface Visitor {
 
     Object visit(String_Const Const);
 
-    Object visit(FunOp Fun);
+    Object visit(FunOp Fun) throws Exception;
 
-    Object visit(ParDeclListOp ParamDeclList);
+    Object visit(ParDeclListOp ParamDeclList) throws Exception;
 
-    Object visit(ParDeclOp ParDecl);
+    Object visit(ParDeclOp ParDecl) throws Exception;
 
-    Object visit(IfStatOp IfStat);
+    Object visit(IfStatOp IfStat) throws Exception;
 
-    Object visit(ElseStatOp Else);
+    Object visit(ElseStatOp Else) throws Exception;
 
-    Object visit(WhileStatOp WhileStat);
+    Object visit(WhileStatOp WhileStat) throws Exception;
 
-    Object visit(ReadStatOp ReadStat);
+    Object visit(ReadStatOp ReadStat) throws Exception;
 
-    Object visit(WriteStatOp WriteStat);
+    Object visit(WriteStatOp WriteStat) throws Exception;
 
-    Object visit(AssignStatOp AssignStat);
+    Object visit(AssignStatOp AssignStat) throws Exception;
 
-    Object visit(CallFunOp CallFun);
+    Object visit(CallFunOp CallFun) throws Exception;
 
-    Object visit(ID id);
+    Object visit(ID id) throws Exception;
 
-    Object visit(BinaryOperation binaryOperation);
+    Object visit(BinaryOperation binaryOperation) throws Exception;
 
-    Object visit(UnaryOperation unaryOperation);
+    Object visit(UnaryOperation unaryOperation) throws Exception;
 
-    Object visit(ReturnExpOp returnExpOp);
+    Object visit(ReturnExpOp returnExpOp) throws Exception;
 }
