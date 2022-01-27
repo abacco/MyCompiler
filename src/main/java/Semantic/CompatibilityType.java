@@ -26,7 +26,7 @@ public class CompatibilityType {
     {
             { ReturnType.UNDEFINED, ReturnType.UNDEFINED, ReturnType.STRING,ReturnType.UNDEFINED},
             { ReturnType.UNDEFINED, ReturnType.UNDEFINED, ReturnType.STRING,ReturnType.UNDEFINED},
-            { ReturnType.STRING,ReturnType.STRING,ReturnType.STRING, ReturnType.UNDEFINED},
+            { ReturnType.STRING     ,ReturnType.STRING   ,ReturnType.STRING,ReturnType.UNDEFINED},
             { ReturnType.UNDEFINED,ReturnType.UNDEFINED,ReturnType.UNDEFINED, ReturnType.UNDEFINED }
     };
 
@@ -64,6 +64,15 @@ public class CompatibilityType {
                     { ReturnType.UNDEFINED, ReturnType.UNDEFINED, ReturnType.UNDEFINED,ReturnType.UNDEFINED},
                     { ReturnType.UNDEFINED,ReturnType.UNDEFINED,ReturnType.UNDEFINED, ReturnType.UNDEFINED},
                     { ReturnType.UNDEFINED,ReturnType.UNDEFINED,ReturnType.UNDEFINED, ReturnType.UNDEFINED }
+
+            };
+
+    public static ReturnType ASSIGNOP[][] =
+            {
+                    { ReturnType.INT, ReturnType.INT, ReturnType.UNDEFINED,ReturnType.UNDEFINED},
+                    { ReturnType.REAL, ReturnType.REAL, ReturnType.UNDEFINED,ReturnType.UNDEFINED},
+                    { ReturnType.UNDEFINED,ReturnType.UNDEFINED,ReturnType.STRING, ReturnType.UNDEFINED},
+                    { ReturnType.UNDEFINED,ReturnType.UNDEFINED,ReturnType.UNDEFINED, ReturnType.BOOLEAN }
 
             };
 

@@ -62,12 +62,12 @@ precedence left LPAR, RPAR;
 Program ::= VarDeclList:listVar FunList:listFun Main:main {:RESULT = new ProgramOp(listVar, listFun, main);:};
 
 VarDeclList ::= /* empty */ {: RESULT = new ArrayList<VarDeclOp>(); :}
-	| VarDecl:var VarDeclList:listVar {: listVar.add(var); RESULT = listVar; :};
+	| VarDecl:var VarDeclList:listVar {: listVar.add((listVar.size() == 0 ? 0:listVar.size()-1),var); RESULT = listVar; :};
 
 Main ::= MAIN VarDeclList:varList StatList:statList END MAIN SEMI {:RESULT = new MainOp(varList, statList);:};
 
 FunList ::= /* empty */  {: RESULT = new ArrayList<FunOp>(); :}
-	| Fun:f FunList:listFun {: listFun.add(f); RESULT = listFun; :};
+	| Fun:f FunList:listFun {: listFun.add((listFun.size() == 0 ? 0:listFun.size()-1),f); RESULT = listFun; :};
 
 VarDecl ::= Type:t IdListInit:list SEMI     {:RESULT = new VarDeclOp(t, list);:}
 	| VAR IdListInitObbl:list SEMI          {:RESULT = new VarDeclOp(list);:};
@@ -115,14 +115,14 @@ Fun ::= FUN ID:id LPAR ParamDeclList:listPar RPAR COLON Type:t
 ParamDeclList ::= /*empty */        {:RESULT = new ParDeclListOp();:}
 	| NonEmptyParamDeclList:listPar {:RESULT = new ParDeclListOp(listPar);:};
 
-NonEmptyParamDeclList ::= ParDecl:decl                 {: RESULT = new ArrayList<ParDeclOp>(); RESULT.add(decl); :}
-	| NonEmptyParamDeclList:listPar COMMA ParDecl:decl {: listPar.add(decl); RESULT = listPar; :};
+NonEmptyParamDeclList ::= ParDecl:decl                 {: RESULT = new ArrayList<ParDeclOp>(); RESULT.add((RESULT.size() == 0 ? 0:RESULT.size()-1),decl); :}
+	| NonEmptyParamDeclList:listPar COMMA ParDecl:decl {: listPar.add((listPar.size() == 0 ? 0:listPar.size()-1),decl); RESULT = listPar; :};
 
 ParDecl ::= Type:t ID:id {:RESULT = new ParDeclOp(ParDeclOp.ParType.IN,t, id);:}
 	| OUT Type:t ID:id   {:RESULT = new ParDeclOp(ParDeclOp.ParType.OUT,t, id);:};
 
 StatList ::= /* empty */            {: RESULT = new ArrayList<Statement>(); :}
-	 | Stat:st StatList:listStat {: listStat.add(st); RESULT = listStat; :};
+	 | Stat:st StatList:listStat {: listStat.add((listStat.size() == 0 ? 0:listStat.size()-1),st); RESULT = listStat; :};
 
 Stat ::= IfStat:stat SEMI   {:RESULT = stat;:}
 	| WhileStat:stat SEMI   {:RESULT = stat;:}
@@ -144,7 +144,7 @@ ReadStat ::= READ IdList:listId Expr:exp  {:RESULT = new ReadStatOp(listId, exp)
 	| READ IdList:listId             {:RESULT = new ReadStatOp(listId);:};
 
 IdList ::= ID:id                      {: RESULT = new ArrayList<ID>(); RESULT.add(new ID(id)); :}
-	| IdList:listId COMMA ID:id       {: listId.add(new ID(id)); RESULT = listId; :};
+	| IdList:listId COMMA ID:id       {: listId.add((listId.size() == 0 ? 0:listId.size()-1),new ID(id)); RESULT = listId; :};
 
 WriteStat ::=  WRITE  Expr:exp  {: RESULT = new WriteStatOp(WriteStatOp.TypeWrite.WRITE,exp);:}
 	| WRITELN  Expr:exp         {: RESULT = new WriteStatOp(WriteStatOp.TypeWrite.WRITELN,exp);:}
@@ -157,10 +157,10 @@ AssignStat ::=  ID:id ASSIGN Expr:expr {: RESULT = new AssignStatOp(new ID(id), 
 CallFun ::= ID:id LPAR ExprList:exprList RPAR {: RESULT = new CallFunOp(new ID(id), exprList); :}
 	| ID:id  LPAR RPAR                        {: RESULT = new CallFunOp(new ID(id)); :} ;
 
-ExprList ::= Expr:expr                        {: RESULT = new ArrayList<Expression>(); RESULT.add(expr); :}
-	| Expr:expr COMMA ExprList:exprList       {: exprList.add(expr); RESULT = exprList; :}
-	| OUTPAR ID:id                            {: RESULT = new ArrayList<Expression>(); ID idPar =new ID(id); idPar.setOutPar(true);  RESULT.add(idPar); :}
-    | OUTPAR ID:id COMMA ExprList:exprList    {: ID idPar =new ID(id); idPar.setOutPar(true); exprList.add(idPar); RESULT = exprList; :};
+ExprList ::= Expr:expr                        {: RESULT = new ArrayList<Expression>(); RESULT.add((RESULT.size() == 0 ? 0:RESULT.size()-1),expr); :}
+	| Expr:expr COMMA ExprList:exprList       {: exprList.add((exprList.size() == 0 ? 0:exprList.size()-1),expr); RESULT = exprList; :}
+	| OUTPAR ID:id                            {: RESULT = new ArrayList<Expression>(); ID idPar =new ID(id); idPar.setOutPar(true);  RESULT.add((RESULT.size() == 0 ? 0:RESULT.size()-1),idPar); :}
+    | OUTPAR ID:id COMMA ExprList:exprList    {: ID idPar =new ID(id); idPar.setOutPar(true); exprList.add((exprList.size() == 0 ? 0:exprList.size()-1),idPar); RESULT = exprList; :};
 
 Expr ::=
       TRUE                       {: RESULT = new Boolean_Const(true); :}

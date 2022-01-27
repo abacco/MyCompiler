@@ -1,6 +1,5 @@
 package Visitor;
 
-import Node.*;
 import Node.Constant.Boolean_Const;
 import Node.Constant.Integer_Const;
 import Node.Constant.Real_Const;
@@ -10,15 +9,11 @@ import Node.Expression.BinaryOperation;
 import Node.Expression.CallFunOp;
 import Node.Expression.Expression;
 import Node.Expression.UnaryOperation;
+import Node.*;
 import Node.Statement.*;
 import Semantic.*;
-import Semantic.Enum.Kind;
 import Semantic.Enum.ParType;
 import Semantic.Enum.ReturnType;
-import org.w3c.dom.Element;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class SemanticVisitor implements Visitor {
     private final ISymbolTable symbolTable;
@@ -250,9 +245,6 @@ public class SemanticVisitor implements Visitor {
         for (ID el: ReadStat.getListId()){
             ReturnType typeID= (ReturnType) el.accept(this);
 
-            if(typeE != null) {
-                if (typeID != typeE) return 0; //ERROR
-            }
         }
 
         ReadStat.setNodeType(ReturnType.NO_TYPE);
@@ -273,10 +265,14 @@ public class SemanticVisitor implements Visitor {
         /* T(id) = τ  T ` e : τ
         Γ ` id := e : notype */
 
-        ReturnType typeE = (ReturnType) AssignStat.getExpression().accept(this);
-        ReturnType typeI = (ReturnType) AssignStat.getId().accept(this);
+        ReturnType typeId = (ReturnType) AssignStat.getId().accept(this);
+        ReturnType typeExpression = (ReturnType) AssignStat.getExpression().accept(this);
 
-        if(typeE != typeI) return 0; //ERROR
+
+        int row = CompatibilityType.getIndexFor(typeId);
+        int col = CompatibilityType.getIndexFor(typeExpression);
+        ReturnType nodeType = CompatibilityType.ASSIGNOP[row][col];
+        if(nodeType == ReturnType.UNDEFINED) return 0; //ERROR CORREGGERE
 
         AssignStat.setNodeType(ReturnType.NO_TYPE);
         return ReturnType.NO_TYPE;
@@ -290,24 +286,24 @@ public class SemanticVisitor implements Visitor {
 
         if(CallFun.getListExpression().size() != funKind.getListParm().size()) return 0; //ERROR
 
-            for(ParamType p: funKind.getListParm())
+            for(int i=0; i<funKind.getListParm().size(); i++)
             {
-                for(Expression el: CallFun.getListExpression())
+                ParamType p = funKind.getListParm().get(0);
+                Expression el = CallFun.getListExpression().get(0);
+                ReturnType returnTypeExpression = (ReturnType) el.accept(this);
+                if(el instanceof ID)
                 {
-                    ReturnType returnTypeExpression = (ReturnType) el.accept(this);
-                    if(el instanceof ID)
-                    {
-                        ID id = (ID) el;
-                        if(p.getParType()== ParType.OUT && !id.isOutPar()) return 0; //Error
-                        if(p.getParType()== ParType.IN && id.isOutPar())    return 0; //Error
-                        if(p.getVarType()!=returnTypeExpression) return 0; //Error
-                    }
-                    else
-                    {
-                        if(p.getVarType()!=returnTypeExpression) return 0; //Error
-                    }
+                    ID id = (ID) el;
+                    if(p.getParType()== ParType.OUT && !id.isOutPar()) return 0; //Error
+                    if(p.getParType()== ParType.IN && id.isOutPar())    return 0; //Error
+                    if(p.getVarType()!=returnTypeExpression) return 0; //Error
+                }
+                else
+                {
+                    if(p.getVarType()!=returnTypeExpression) return 0; //Error
                 }
             }
+
             CallFun.setNodeType(funKind.getReturnType());
             return CallFun.getNodeType();
 

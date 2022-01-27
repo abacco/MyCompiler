@@ -5,18 +5,9 @@ import Visitor.SemanticVisitor;
 import Visitor.SymbolTableVisitor;
 import Visitor.XMLGenerator;
 
-import java_cup.runtime.Symbol;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 public class Tester
