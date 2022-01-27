@@ -153,7 +153,7 @@ public class SemanticVisitor implements Visitor {
             ret = (ReturnType) el.accept(this);
             if(el instanceof ReturnExpOp){
                 ReturnExpOp returnOp = (ReturnExpOp) el;
-                ReturnType expressionType = returnOp.getNodeType();
+                ReturnType expressionType = ((SyntaxtNode)returnOp.getExpression()).getNodeType();
                 if(expressionType!= funkind.getReturnType()) return 0; //ERROR
             }
             if(ret != ReturnType.NO_TYPE) return 0; //ERROR
@@ -317,6 +317,7 @@ public class SemanticVisitor implements Visitor {
     public Object visit(ID id) {
 
         IKind kind = symbolTable.lookup(id.getAttachScope(), id.getName());
+        id.setNodeType(kind.getReturnType());
         return kind.getReturnType();
 
     }

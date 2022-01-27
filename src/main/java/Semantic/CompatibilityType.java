@@ -24,9 +24,9 @@ public class CompatibilityType {
 
     public static ReturnType STR_CONCAT[][] =
     {
-            { ReturnType.UNDEFINED, ReturnType.UNDEFINED, ReturnType.UNDEFINED,ReturnType.UNDEFINED},
-            { ReturnType.UNDEFINED, ReturnType.UNDEFINED, ReturnType.UNDEFINED,ReturnType.UNDEFINED},
-            { ReturnType.UNDEFINED,ReturnType.UNDEFINED,ReturnType.STRING, ReturnType.UNDEFINED},
+            { ReturnType.UNDEFINED, ReturnType.UNDEFINED, ReturnType.STRING,ReturnType.UNDEFINED},
+            { ReturnType.UNDEFINED, ReturnType.UNDEFINED, ReturnType.STRING,ReturnType.UNDEFINED},
+            { ReturnType.STRING,ReturnType.STRING,ReturnType.STRING, ReturnType.UNDEFINED},
             { ReturnType.UNDEFINED,ReturnType.UNDEFINED,ReturnType.UNDEFINED, ReturnType.UNDEFINED }
     };
 

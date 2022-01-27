@@ -54,10 +54,10 @@ public class Tester
         TreeSymbolTable symbolTable = (TreeSymbolTable) prog.accept(visitor);
 
         symbolTable.stampTree();
-        /*
+
         SemanticVisitor semanticVisitor = new SemanticVisitor(symbolTable);
         ReturnType returnType = (ReturnType) prog.accept(semanticVisitor);
-        */
+
     }
 
 }

@@ -88,6 +88,8 @@ public class SymbolTableVisitor implements Visitor{
             for (String key: idListInit.getList().keySet())
             {
                 if(symbolTable.prob(key)) throw new Exception("La variabile " + key + " è già stata dichiarata"); //ERROR;
+                Expression exp = idListInit.getList().get(key);
+                if(exp!=null)exp.accept(this);
                 symbolTable.add(key, new VarKind(typeDeclaration));
             }
 
@@ -101,6 +103,7 @@ public class SymbolTableVisitor implements Visitor{
                 ReturnType constantType = (ReturnType) idListInit.getList().get(key).accept(this);
                 symbolTable.add(key, new VarKind(constantType));
             }
+
         }
         VarDecl.getListInit().accept(this );
         VarDecl.attachScope(symbolTable.getCurrentScope());
@@ -181,6 +184,7 @@ public class SymbolTableVisitor implements Visitor{
         for (Statement el: Fun.getListStatement()){
             ReturnType e = (ReturnType) el.accept(this);
         }
+
         Fun.attachScope(symbolTable.getCurrentScope());
         symbolTable.exitScope();
 
@@ -274,6 +278,7 @@ public class SymbolTableVisitor implements Visitor{
         if(ReadStat.getExpression()!=null) ReadStat.getExpression().accept(this);
 
         for (ID el: ReadStat.getListId()){
+            el.accept(this);
             if(symbolTable.lookup(el.getName())==null)  throw new Exception("La variabile " + el.getName() + "non è dichiarata"); //ERROR;
         }
         ReadStat.attachScope(symbolTable.getCurrentScope());

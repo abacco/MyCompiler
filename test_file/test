@@ -48,6 +48,7 @@ main
 
 real input1, input2;
 real result;
+integer resultInt := 0;
 var ans := 'no';
 
 while flag loop
