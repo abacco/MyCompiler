@@ -1,7 +1,7 @@
 import Node.ProgramOp;
 import Semantic.Enum.ReturnType;
 import Semantic.TreeSymbolTable;
-import Visitor.SemanticVisitor;
+import Visitor.TypeCheckingVisitor;
 import Visitor.SymbolTableVisitor;
 import Visitor.XMLGenerator;
 
@@ -46,7 +46,7 @@ public class Tester
 
         symbolTable.stampTree();
 
-        SemanticVisitor semanticVisitor = new SemanticVisitor(symbolTable);
+        TypeCheckingVisitor semanticVisitor = new TypeCheckingVisitor(symbolTable);
         ReturnType returnType = (ReturnType) prog.accept(semanticVisitor);
 
     }

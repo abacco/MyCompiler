@@ -16,10 +16,10 @@ import Semantic.Enum.ParType;
 import Semantic.Enum.ReturnType;
 import jdk.nashorn.internal.codegen.CompilerConstants;
 
-public class SemanticVisitor implements Visitor {
+public class TypeCheckingVisitor implements Visitor {
     private final ISymbolTable symbolTable;
 
-    public SemanticVisitor(ISymbolTable symbolTable){
+    public TypeCheckingVisitor(ISymbolTable symbolTable){
         this.symbolTable=symbolTable;
     }
 
