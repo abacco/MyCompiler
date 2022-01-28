@@ -26,7 +26,7 @@ public class IdListInitObblOp extends SyntaxtNode implements IListInit
         return list;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(Visitor visitor) throws Exception {
         return visitor.visit(this);
     }
 

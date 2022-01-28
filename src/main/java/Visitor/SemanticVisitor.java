@@ -14,6 +14,7 @@ import Node.Statement.*;
 import Semantic.*;
 import Semantic.Enum.ParType;
 import Semantic.Enum.ReturnType;
+import jdk.nashorn.internal.codegen.CompilerConstants;
 
 public class SemanticVisitor implements Visitor {
     private final ISymbolTable symbolTable;
@@ -27,9 +28,11 @@ public class SemanticVisitor implements Visitor {
 
         for (VarDeclOp el: Program.getListVarDecl()){
             ReturnType e = (ReturnType) el.accept(this);
+            if(e != ReturnType.NO_TYPE) throw new Exception("Le dichiarazioni di variabili non devono ritornare alcun tipo");
         }
         for (FunOp funOp: Program.getListFun()){
             ReturnType e = (ReturnType) funOp.accept(this);
+            if(e != ReturnType.NO_TYPE) throw new Exception("Le dichiarazioni di funzioni non devono ritornare alcun tipo");
         }
         ReturnType main = (ReturnType) Program.getMainOp().accept(this);
 
@@ -42,11 +45,11 @@ public class SemanticVisitor implements Visitor {
 
         for (VarDeclOp el: Main.getListVarDecl()){
             ReturnType e = (ReturnType) el.accept(this);
-
+            if(e != ReturnType.NO_TYPE) throw new Exception("Le dichiarazioni di variabili non devono ritornare alcun tipo");
         }
         for (Statement el: Main.getListStatement()){
             ReturnType e = (ReturnType) el.accept(this);
-            if(e != ReturnType.NO_TYPE) return 0; //ERROR
+            if(e != ReturnType.NO_TYPE) throw new Exception("Gli statement non devono ritornare alcun tipo");
         }
 
         Main.setNodeType(ReturnType.NO_TYPE);
@@ -57,7 +60,7 @@ public class SemanticVisitor implements Visitor {
     public Object visit(VarDeclOp VarDecl) throws Exception {
 
         ReturnType type = (ReturnType) VarDecl.getListInit().accept(this);
-        if(type!= ReturnType.NO_TYPE) return 0; //ERROR
+        if(type!= ReturnType.NO_TYPE) throw new Exception("Le dichiarazioni di variabili non devono ritornare alcun tipo");
 
         VarDecl.setNodeType(ReturnType.NO_TYPE);
         return ReturnType.NO_TYPE;
@@ -79,7 +82,7 @@ public class SemanticVisitor implements Visitor {
             if(IdListInit.getList().get(key)!=null)
             {
                 ReturnType constant = (ReturnType) IdListInit.getList().get(key).accept(this);
-                if(varType!=constant) return 0; //ERROR
+                if(varType!=constant) throw new Exception("Non è possibile assegnare alla variabile " + key + " di tipo " + varType + " il valore di un espressione di tipo " + constant);
             }
         }
 
@@ -88,7 +91,7 @@ public class SemanticVisitor implements Visitor {
     }
 
     @Override
-    public Object visit(IdListInitObblOp IdListInitObbl) {
+    public Object visit(IdListInitObblOp IdListInitObbl) throws Exception {
         //verifichiamo che non ci siano id già definiti nello stesso scope
         for (String key: IdListInitObbl.getList().keySet())
         {
@@ -96,7 +99,7 @@ public class SemanticVisitor implements Visitor {
             if(IdListInitObbl.getList().get(key)!=null)
             {
                 ReturnType constant = (ReturnType) IdListInitObbl.getList().get(key).accept(this);
-                if(varType!=constant) return 0; //ERROR
+                if(varType!=constant) throw new Exception("Non è possibile assegnare alla variabile " + key + " di tipo " + varType + " un espressione di tipo " + constant);
             }
         }
 
@@ -138,20 +141,21 @@ public class SemanticVisitor implements Visitor {
         FunctionKind funkind = (FunctionKind) symbolTable.lookup(Fun.getAttachScope(), Fun.getId().getName());
 
         ReturnType ret = (ReturnType) Fun.getListParam().accept(this);
-        if(ret != ReturnType.NO_TYPE) return 0; //ERROR
+        if(ret != ReturnType.NO_TYPE) throw new Exception("La lista di parametri devono ritornare alcun tipo");
 
         for (VarDeclOp el: Fun.getListVarDecl()){
             ret = (ReturnType) el.accept(this);
-            if(ret != ReturnType.NO_TYPE) return 0; //ERROR
+            if(ret != ReturnType.NO_TYPE) throw new Exception("La dichiarazione di una variabile non deve ritornare alcun tipo");
         }
         for (Statement el: Fun.getListStatement()){
             ret = (ReturnType) el.accept(this);
             if(el instanceof ReturnExpOp){
                 ReturnExpOp returnOp = (ReturnExpOp) el;
                 ReturnType expressionType = ((SyntaxtNode)returnOp.getExpression()).getNodeType();
-                if(expressionType!= funkind.getReturnType()) return 0; //ERROR
+                if(expressionType!= funkind.getReturnType()) throw new Exception("La funzione " + Fun.getId().getName() + " ritorno un valore di tipo " + funkind.getReturnType() +
+                                                                                " ma nello statement return viene ritornato un valore di tipo " + expressionType);
             }
-            if(ret != ReturnType.NO_TYPE) return 0; //ERROR
+            if(ret != ReturnType.NO_TYPE) throw new Exception("Gli statement non devono ritornare alcun tipo");
         }
 
 
@@ -164,7 +168,7 @@ public class SemanticVisitor implements Visitor {
 
         for (ParDeclOp el: ParamDeclList.getListParDecl()){
             ReturnType e = (ReturnType) el.accept(this);
-            if(e != ReturnType.NO_TYPE) return 0; //Error
+            if(e != ReturnType.NO_TYPE) throw new Exception("La dichiarazione di un parametro non deve tornare alcun tipo");
         }
 
         ParamDeclList.setNodeType(ReturnType.NO_TYPE);
@@ -172,10 +176,10 @@ public class SemanticVisitor implements Visitor {
     }
 
     @Override
-    public Object visit(ParDeclOp ParDecl) {
+    public Object visit(ParDeclOp ParDecl) throws Exception {
 
         String id = ParDecl.getId();
-        if(symbolTable.prob(id)) return 0; //ERROR
+        if(symbolTable.prob(id)) throw new Exception("Il parametro " + ParDecl.getId() + " è stato già dichiarato all'interno della funzione");
 
         ParDecl.setNodeType(ReturnType.NO_TYPE);
         return ReturnType.NO_TYPE;
@@ -191,11 +195,11 @@ public class SemanticVisitor implements Visitor {
         }
 
         ReturnType typeE = (ReturnType) IfStat.getExpression().accept(this);
-        if(typeE!=ReturnType.BOOLEAN) return 0; //ERROR
+        if(typeE!=ReturnType.BOOLEAN) throw new Exception("L'If statement può valutare solo espressioni bool");
 
         for (Statement el: IfStat.getListStatement()){
             ReturnType typeS = (ReturnType) el.accept(this);
-            if(typeS != ReturnType.NO_TYPE) return 0; //ERROR
+            if(typeS != ReturnType.NO_TYPE) throw new Exception("Gli statement non devono ritornare alcun tipo");
         }
 
         IfStat.setNodeType(ReturnType.NO_TYPE);
@@ -211,7 +215,7 @@ public class SemanticVisitor implements Visitor {
         }
         for (Statement el: Else.getListStat()){
             ReturnType typeS = (ReturnType) el.accept(this);
-            if(typeS != ReturnType.NO_TYPE) return 0; //ERROR
+            if(typeS != ReturnType.NO_TYPE) throw new Exception("Gli statement non devono ritornare alcun tipo");
         }
 
         Else.setNodeType(ReturnType.NO_TYPE);
@@ -222,7 +226,7 @@ public class SemanticVisitor implements Visitor {
     public Object visit(WhileStatOp WhileStat) throws Exception {
 
         ReturnType typeE = (ReturnType) WhileStat.getExpression().accept(this);
-        if(typeE!=ReturnType.BOOLEAN) return 0; //ERROR
+        if(typeE!=ReturnType.BOOLEAN) throw new Exception("While statement può valutare solo espressioni bool");
 
         for (VarDeclOp el: WhileStat.getVarDeclListOp()){
             ReturnType e = (ReturnType) el.accept(this);
@@ -230,7 +234,7 @@ public class SemanticVisitor implements Visitor {
         }
         for (Statement el: WhileStat.getListStatement()){
             ReturnType typeS = (ReturnType) el.accept(this);
-            if(typeS != ReturnType.NO_TYPE) return 0; //ERROR
+            if(typeS != ReturnType.NO_TYPE) throw new Exception("Gli statement non devono ritornare alcun tipo");
         }
 
         WhileStat.setNodeType(ReturnType.NO_TYPE);
@@ -272,7 +276,7 @@ public class SemanticVisitor implements Visitor {
         int row = CompatibilityType.getIndexFor(typeId);
         int col = CompatibilityType.getIndexFor(typeExpression);
         ReturnType nodeType = CompatibilityType.ASSIGNOP[row][col];
-        if(nodeType == ReturnType.UNDEFINED) return 0; //ERROR CORREGGERE
+        if(nodeType == ReturnType.UNDEFINED) throw new Exception("Non è possibile assegnare alla variabile " + AssignStat.getId().getName() + " di tipo " + typeId + " il valore di un espressione di tipo " + typeExpression);
 
         AssignStat.setNodeType(ReturnType.NO_TYPE);
         return ReturnType.NO_TYPE;
@@ -284,7 +288,7 @@ public class SemanticVisitor implements Visitor {
 
         FunctionKind funKind = (FunctionKind) symbolTable.lookup(CallFun.getAttachScope(),CallFun.getId().getName());
 
-        if(CallFun.getListExpression().size() != funKind.getListParm().size()) return 0; //ERROR
+        if(CallFun.getListExpression().size() != funKind.getListParm().size()) throw new Exception("Stai provando a chiamare la funzione " + CallFun.getId().getName() + " passando più argomenti dei parametri definiti nella funzione.");
 
             for(int i=0; i<funKind.getListParm().size(); i++)
             {
@@ -294,13 +298,13 @@ public class SemanticVisitor implements Visitor {
                 if(el instanceof ID)
                 {
                     ID id = (ID) el;
-                    if(p.getParType()== ParType.OUT && !id.isOutPar()) return 0; //Error
-                    if(p.getParType()== ParType.IN && id.isOutPar())    return 0; //Error
-                    if(p.getVarType()!=returnTypeExpression) return 0; //Error
+                    if(p.getParType()== ParType.OUT && !id.isOutPar()) throw new Exception("Il parametro " + (i+1) + " della funzione " + CallFun.getId().getName() + " è un puntatore (out), ma l'argomento " + id.getName() + " non viene passato per riferimento (@)" );
+                    if(p.getParType()== ParType.IN && id.isOutPar())    throw new Exception("Il parametro " + (i+1) + " della funzione " + CallFun.getId().getName() + " non è un puntatore, ma l'argomento " + id.getName() + " viene passato per riferimento (@)" );
+                    if(p.getVarType()!=returnTypeExpression) throw new Exception("Il parametro " + (i+1) + " della funzione " + CallFun.getId().getName() + " è di tipo " + p.getVarType() + ", ma l'argomento " + id.getName() + " è di tipo " + returnTypeExpression);
                 }
                 else
                 {
-                    if(p.getVarType()!=returnTypeExpression) return 0; //Error
+                    if(p.getVarType()!=returnTypeExpression) throw new Exception("Il parametro " + (i+1) + " della funzione " + CallFun.getId().getName() + " è di tipo " + p.getVarType() + ", ma il valore che gli viene passato è di tipo " + returnTypeExpression);
                 }
             }
 
@@ -334,7 +338,7 @@ public class SemanticVisitor implements Visitor {
             int row = CompatibilityType.getIndexFor(typeOP1);
             int col = CompatibilityType.getIndexFor(typeOP2);
             ReturnType nodeType = CompatibilityType.Arithmetic_operation[row][col];
-            if(nodeType == ReturnType.UNDEFINED) return 0; //ERROR CORREGGERE
+            if(nodeType == ReturnType.UNDEFINED) throw new Exception("Gli operatori aritmetici non sono applicabili fra un tipo " + typeOP1 + " e " + typeOP2);
             binaryOperation.setNodeType(nodeType);
             return nodeType;
         }
@@ -346,7 +350,7 @@ public class SemanticVisitor implements Visitor {
             int row = CompatibilityType.getIndexFor(typeOP1);
             int col = CompatibilityType.getIndexFor(typeOP2);
             ReturnType nodeType = CompatibilityType.RELOP[row][col];
-            if(nodeType == ReturnType.UNDEFINED) return 0; //ERROR CORREGGERE
+            if(nodeType == ReturnType.UNDEFINED) throw new Exception("Gli operatori relazionali non sono applicabili fra un tipo " + typeOP1 + " e " + typeOP2);
             binaryOperation.setNodeType(nodeType);
             return nodeType;
         }
@@ -355,7 +359,7 @@ public class SemanticVisitor implements Visitor {
             int row = CompatibilityType.getIndexFor(typeOP1);
             int col = CompatibilityType.getIndexFor(typeOP2);
             ReturnType nodeType = CompatibilityType.EQRELOP[row][col];
-            if(nodeType == ReturnType.UNDEFINED) return 0; //ERROR CORREGGERE
+            if(nodeType == ReturnType.UNDEFINED) throw new Exception("L'operatore =  non è applicabile fra un tipo " + typeOP1 + " e " + typeOP2);
             binaryOperation.setNodeType(nodeType);
             return nodeType;
         }
@@ -364,7 +368,7 @@ public class SemanticVisitor implements Visitor {
             int row = CompatibilityType.getIndexFor(typeOP1);
             int col = CompatibilityType.getIndexFor(typeOP2);
             ReturnType nodeType = CompatibilityType.AND_OR[row][col];
-            if(nodeType == ReturnType.UNDEFINED) return 0; //ERROR CORREGGERE
+            if(nodeType == ReturnType.UNDEFINED) throw new Exception("Gli operatori and e or non sono applicabili fra un tipo " + typeOP1 + " e " + typeOP2);
             binaryOperation.setNodeType(nodeType);
             return nodeType;
         }
@@ -373,7 +377,7 @@ public class SemanticVisitor implements Visitor {
             int row = CompatibilityType.getIndexFor(typeOP1);
             int col = CompatibilityType.getIndexFor(typeOP2);
             ReturnType nodeType = CompatibilityType.STR_CONCAT[row][col];
-            if(nodeType == ReturnType.UNDEFINED) return 0; //ERROR CORREGGERE
+            if(nodeType == ReturnType.UNDEFINED) throw new Exception("L'operatore di concatenazione stringhe (&) non è applicabile fra un tipo " + typeOP1 + " e " + typeOP2);
             binaryOperation.setNodeType(nodeType);
             return nodeType;
         }
@@ -382,7 +386,7 @@ public class SemanticVisitor implements Visitor {
             int row = CompatibilityType.getIndexFor(typeOP1);
             int col = CompatibilityType.getIndexFor(typeOP2);
             ReturnType nodeType = CompatibilityType.DIVINT_POW[row][col];
-            if(nodeType == ReturnType.UNDEFINED) return 0; //ERROR CORREGGERE
+            if(nodeType == ReturnType.UNDEFINED) throw new Exception("L'operatore div non è applicabile fra un tipo " + typeOP1 + " e " + typeOP2);
             binaryOperation.setNodeType(nodeType);
             return nodeType;
         }
@@ -397,14 +401,14 @@ public class SemanticVisitor implements Visitor {
         if(unaryOperation.getType() == UnaryOperation.UnaryOperationType.NotOp){
             int col = CompatibilityType.getIndexFor(type);
             ReturnType nodeType = CompatibilityType.NOT[col];
-            if(nodeType == ReturnType.UNDEFINED) return 0; //ERROR CORREGGERE
+            if(nodeType == ReturnType.UNDEFINED) throw new Exception("L'operatore unario not non è applicabile ad un tipo " + type );
             unaryOperation.setNodeType(nodeType);
             return nodeType;
         }
         else if(unaryOperation.getType() == UnaryOperation.UnaryOperationType.UminusOp) {
             int col = CompatibilityType.getIndexFor(type);
             ReturnType nodeType = CompatibilityType.MINUS[col];
-            if(nodeType == ReturnType.UNDEFINED) return 0; //ERROR CORREGGERE
+            if(nodeType == ReturnType.UNDEFINED) throw new Exception("L'operatore unario - non è applicabile ad un tipo " + type );
             unaryOperation.setNodeType(nodeType);
             return nodeType;
         }

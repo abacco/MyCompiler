@@ -73,7 +73,7 @@ if opzione=3 then
 	result := divisione(input1, input2);
 end if;
 if opzione=4 then
-	result := divisioneInteri(input1, input2);
+	#* result := divisioneInteri(input1, input2); #
 end if;
 
 ?. 'Il risultato è ' & result;

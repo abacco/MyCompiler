@@ -26,7 +26,7 @@ public interface Visitor {
 
     Object visit(IdListInitOp IdListInit) throws Exception;
 
-    Object visit(IdListInitObblOp IdListInitObbl);
+    Object visit(IdListInitObblOp IdListInitObbl) throws Exception;
 
     Object visit(Boolean_Const bconst);
 
