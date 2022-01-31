@@ -31,7 +31,7 @@ end fun;
 # stampa il messaggio dopo 4 ritorni a capo
 fun stampa(string messaggio)
 
-	var i := 1;
+	integer i := 1;
 	while i <= 4 loop
 		var incremento := 1;
 		?. '';

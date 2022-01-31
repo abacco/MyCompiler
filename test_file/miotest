@@ -1,4 +1,5 @@
 
 main
-i := false;
+real i ;
+i := 1;
 end main;

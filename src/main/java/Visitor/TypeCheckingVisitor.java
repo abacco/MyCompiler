@@ -248,7 +248,6 @@ public class TypeCheckingVisitor implements Visitor {
 
         for (ID el: ReadStat.getListId()){
             ReturnType typeID= (ReturnType) el.accept(this);
-
         }
 
         ReadStat.setNodeType(ReturnType.NO_TYPE);
