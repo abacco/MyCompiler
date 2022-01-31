@@ -88,16 +88,6 @@ public class CodeVisitor implements Visitor{
     }
 
     @Override
-    public Object visit(IdListInitOp IdListInit) throws Exception {
-        return null;
-    }
-
-    @Override
-    public Object visit(IdListInitObblOp IdListInitObbl) {
-        return null;
-    }
-
-    @Override
     public Object visit(Boolean_Const bconst) {
         return String.valueOf(bconst.getValue());
     }
@@ -115,6 +105,16 @@ public class CodeVisitor implements Visitor{
     @Override
     public Object visit(String_Const Const) {
         return "\"" + String.valueOf(Const.getStringConst()) + "\"";
+    }
+
+    @Override
+    public Object visit(IdListInitOp IdListInit) throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object visit(IdListInitObblOp IdListInitObbl) {
+        return null;
     }
 
     @Override
@@ -187,7 +187,4 @@ public class CodeVisitor implements Visitor{
         return null;
     }
 
-    /* private String compactCode(List<? extends SyntaxtNode> list) {
-        return list.stream().map(l -> l.accept(this)).reduce("", String::concat);
-    } */
 }
