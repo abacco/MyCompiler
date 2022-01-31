@@ -53,8 +53,7 @@ public class Tester
         ReturnType returnType = (ReturnType) prog.accept(semanticVisitor);
 
         CodeVisitor codeVisitor = new CodeVisitor(symbolTable);
-
-
+        
         File generatedFile = new File(System.getProperty("user.dir")+"\\file.c");
         FileWriter pw = new FileWriter(generatedFile);
 
