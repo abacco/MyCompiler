@@ -1,6 +1,7 @@
 import Node.ProgramOp;
 import Semantic.Enum.ReturnType;
 import Semantic.TreeSymbolTable;
+import Visitor.CodeVisitor;
 import Visitor.TypeCheckingVisitor;
 import Visitor.SymbolTableVisitor;
 import Visitor.XMLGenerator;
@@ -8,7 +9,9 @@ import Visitor.XMLGenerator;
 import org.w3c.dom.Document;
 
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 
 public class Tester
 {
@@ -49,6 +52,15 @@ public class Tester
         TypeCheckingVisitor semanticVisitor = new TypeCheckingVisitor(symbolTable);
         ReturnType returnType = (ReturnType) prog.accept(semanticVisitor);
 
+        CodeVisitor codeVisitor = new CodeVisitor(symbolTable);
+
+
+        File generatedFile = new File(System.getProperty("user.dir")+"\\file.c");
+        FileWriter pw = new FileWriter(generatedFile);
+
+        pw.write((String) codeVisitor.visit(prog));
+        pw.close();
+        
     }
 
 }
