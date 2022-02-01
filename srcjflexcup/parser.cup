@@ -141,7 +141,7 @@ Else ::= /* empty */ {:RESULT = new ElseStatOp();:}
 WhileStat ::= WHILE Expr:exp LOOP VarDeclList:listVar  StatList:statList END LOOP {:RESULT = new WhileStatOp(exp, listVar, statList);:};
 
 ReadStat ::= READ IdList:listId Expr:exp  {:RESULT = new ReadStatOp(listId, exp);:}
-	| READ IdList:listId             {:RESULT = new ReadStatOp(listId);:};
+	| READ IdList:listId                  {:RESULT = new ReadStatOp(listId);:};
 
 IdList ::= ID:id                      {: RESULT = new ArrayList<ID>(); RESULT.add(new ID(id)); :}
 	| IdList:listId COMMA ID:id       {: listId.add((listId.size() == 0 ? 0:listId.size()-1),new ID(id)); RESULT = listId; :};

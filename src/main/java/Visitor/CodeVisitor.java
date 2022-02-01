@@ -335,11 +335,48 @@ public class CodeVisitor implements Visitor{
 
     @Override
     public Object visit(ReadStatOp ReadStat) throws Exception {
-        return null;
+
+        StringBuilder builder = new StringBuilder();
+        String expr = "", idList = "";
+        String listFormat = "";
+        if (ReadStat.getExpression() != null){
+            expr = (String) ReadStat.getExpression().accept(this);
+        }
+
+
+        int i = 1;
+        for (ID id  : ReadStat.getListId()){
+
+            listFormat += getFormatReturType(id.getNodeType());
+            idList += "&" + (String) id.accept(this) ;
+            if(ReadStat.getListId().size() != i) idList += ",";
+            i++;
+        }
+
+        return builder.append("scanf(").append(  "\"" + expr.replace("\"","") + listFormat + "\"").append(",").append(idList).append(");").toString();
     }
 
     @Override
-    public Object visit(WriteStatOp WriteStat) throws Exception {
+    public Object visit(WriteStatOp WriteStat) throws Exception
+    {
+
+
+        if(WriteStat.getType()==WriteStatOp.TypeWrite.WRITE)
+        {
+
+        }
+        else if(WriteStat.getType()==WriteStatOp.TypeWrite.WRITELN)
+        {
+
+        }
+        else if(WriteStat.getType()==WriteStatOp.TypeWrite.WRITET)
+        {
+
+        }
+        else
+        {
+
+        }
         return null;
     }
 
@@ -373,12 +410,14 @@ public class CodeVisitor implements Visitor{
     }
 
     @Override
-    public Object visit(UnaryOperation unaryOperation) throws Exception {
+    public Object visit(UnaryOperation unaryOperation) throws Exception
+    {
         return null;
     }
 
     @Override
-    public Object visit(ReturnExpOp returnExpOp) throws Exception {
+    public Object visit(ReturnExpOp returnExpOp) throws Exception
+    {
         StringBuilder builder = new StringBuilder();
         String expression = (String) returnExpOp.getExpression().accept(this);
 
@@ -407,6 +446,26 @@ public class CodeVisitor implements Visitor{
         }
 
         return type;
+    }
+
+    public static String getFormatReturType(ReturnType rt){
+
+        String type = "";
+        if(rt == ReturnType.STRING)
+        {
+            type="%s";
+        }
+        else if(rt == ReturnType.INT)
+        {
+            type="%d";
+        }
+        else if(rt == ReturnType.REAL)
+        {
+            type="%f";
+        }
+
+        return type;
+
     }
 
 }
