@@ -82,6 +82,7 @@ public class CodeVisitor implements Visitor{
         StringBuilder varDeclBuilder = new StringBuilder();
         String type = "";
         String listInit = "";
+
         if(VarDecl.getType()!=null) {
             type = (String) VarDecl.getType().accept(this);
             listInit = (String) VarDecl.getListInit().accept(this);
@@ -141,7 +142,8 @@ public class CodeVisitor implements Visitor{
     }
 
     @Override
-    public Object visit(IdListInitOp IdListInit) throws Exception {
+    public Object visit(IdListInitOp IdListInit) throws Exception
+    {
         StringBuilder listInit = new StringBuilder();
         int i=1;
         String expression = "";
