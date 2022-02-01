@@ -29,15 +29,17 @@ i = incremento;
 
 int main(void){
 
-char *m="ciao";
-double i,  ok=22.2;
 char *m1="ciao2";
 int mercos=2;
+char *m="ciao";
+double i,  ok=22.2;
+int f;
 
 if(flag)
 {
 
-
+printf("ciao");
+scanf("%d%f",&f,&i);
 }
 
  return 0;

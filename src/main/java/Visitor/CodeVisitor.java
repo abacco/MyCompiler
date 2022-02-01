@@ -352,8 +352,8 @@ public class CodeVisitor implements Visitor{
             if(ReadStat.getListId().size() != i) idList += ",";
             i++;
         }
-
-        return builder.append("scanf(").append(  "\"" + expr.replace("\"","") + listFormat + "\"").append(",").append(idList).append(");").toString();
+        builder.append("printf(").append(expr).append(");").append("\n");
+        return builder.append("scanf(").append( "\"" + listFormat + "\"").append(",").append(idList).append(");").toString();
     }
 
     @Override
