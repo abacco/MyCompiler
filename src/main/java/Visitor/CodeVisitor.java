@@ -359,25 +359,27 @@ public class CodeVisitor implements Visitor{
     @Override
     public Object visit(WriteStatOp WriteStat) throws Exception
     {
-
+        StringBuilder builder = new StringBuilder();
+        String expr = (String) WriteStat.getExpression().accept(this);
+        String write = "";
 
         if(WriteStat.getType()==WriteStatOp.TypeWrite.WRITE)
         {
-
+            builder.append("printf(").append(expr).append(");");
         }
         else if(WriteStat.getType()==WriteStatOp.TypeWrite.WRITELN)
         {
-
+            builder.append("printf(").append(expr).append("\n").append(");");
         }
         else if(WriteStat.getType()==WriteStatOp.TypeWrite.WRITET)
         {
-
+            builder.append("printf(").append(expr).append("\t").append(");");
         }
         else
-        {
-
+        { //case WriteB
+            builder.append("printf(").append(expr).append("\b").append(");");
         }
-        return null;
+        return builder.toString();
     }
 
     @Override
