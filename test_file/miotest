@@ -1,5 +1,27 @@
+bool flag := true ;
+
+fun divisione( real a, real b ) : real
+real result := a ;
+return result ;
+end fun;
+
+fun stampa(string messaggio)
+
+	integer i := 1;
+	while true  loop
+		var incremento := 1;
+		i := incremento;
+	end loop;
+
+end fun;
 
 main
-real i ;
-i := 1;
+real i , ok := 22.2;
+string m:='ciao';
+var m1 := 'ciao2', mercos:=2;
+
+if flag then
+
+end if;
+
 end main;

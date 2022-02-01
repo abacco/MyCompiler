@@ -10,6 +10,7 @@ public class ElseStatOp extends SyntaxtNode
 {
     private final ArrayList<VarDeclOp> listVar;
     private final ArrayList<Statement> listStat;
+    private boolean isEmpty=true;
 
     public ArrayList<VarDeclOp> getListVar() {
         return listVar;
@@ -19,9 +20,10 @@ public class ElseStatOp extends SyntaxtNode
         return listStat;
     }
 
-    public ElseStatOp(ArrayList<VarDeclOp> listVar, ArrayList<Statement> listStat) {
+    public ElseStatOp(ArrayList<VarDeclOp> listVar, ArrayList<Statement> listStat, boolean isEmpty) {
         this.listVar = listVar;
         this.listStat = listStat;
+        this.isEmpty = isEmpty;
     }
 
     public ElseStatOp() {
@@ -34,4 +36,11 @@ public class ElseStatOp extends SyntaxtNode
     }
 
 
+    public boolean isEmpty() {
+        return isEmpty;
+    }
+
+    public void setEmpty(boolean empty) {
+        isEmpty = empty;
+    }
 }

@@ -59,6 +59,7 @@ public class TypeCheckingVisitor implements Visitor {
     @Override
     public Object visit(VarDeclOp VarDecl) throws Exception {
 
+        if(VarDecl.getType()!=null) VarDecl.getType().accept(this);
         ReturnType type = (ReturnType) VarDecl.getListInit().accept(this);
         if(type!= ReturnType.NO_TYPE) throw new Exception("Le dichiarazioni di variabili non devono ritornare alcun tipo");
 
@@ -201,6 +202,7 @@ public class TypeCheckingVisitor implements Visitor {
             ReturnType typeS = (ReturnType) el.accept(this);
             if(typeS != ReturnType.NO_TYPE) throw new Exception("Gli statement non devono ritornare alcun tipo");
         }
+
 
         IfStat.setNodeType(ReturnType.NO_TYPE);
         return ReturnType.NO_TYPE;

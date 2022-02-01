@@ -136,7 +136,7 @@ Stat ::= IfStat:stat SEMI   {:RESULT = stat;:}
 IfStat ::= IF Expr:exp THEN VarDeclList:listVar StatList:statList Else:els END IF {:RESULT = new IfStatOp(exp, listVar, statList, els);:};
 
 Else ::= /* empty */ {:RESULT = new ElseStatOp();:}
-	| ELSE VarDeclList:listVar  StatList:listStat {:RESULT = new ElseStatOp(listVar, listStat);:};
+	| ELSE VarDeclList:listVar  StatList:listStat {:RESULT = new ElseStatOp(listVar, listStat, false);:};
 
 WhileStat ::= WHILE Expr:exp LOOP VarDeclList:listVar  StatList:statList END LOOP {:RESULT = new WhileStatOp(exp, listVar, statList);:};
 
