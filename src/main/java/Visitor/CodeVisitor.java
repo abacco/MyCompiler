@@ -8,8 +8,10 @@ import Node.Constant.String_Const;
 import Node.Declaration.*;
 import Node.Expression.BinaryOperation;
 import Node.Expression.CallFunOp;
+import Node.Expression.Expression;
 import Node.Expression.UnaryOperation;
 import Node.Statement.*;
+import Semantic.CompatibilityType;
 import Semantic.Enum.ReturnType;
 import Semantic.FunctionKind;
 import Semantic.TreeSymbolTable;
@@ -18,7 +20,32 @@ public class CodeVisitor implements Visitor{
     private static final String C_HEADER =
             "#include <stdio.h>\n" + "#include <stdbool.h>\n#include <string.h>\n#include<stdlib.h>\n";
 
+
     private static final String DECL_HEADER =  "#define LENGTH  2048\n" + "char str1[LENGTH], str2[LENGTH];\n";
+    private static final String DEFAULT_FUNCTION =
+            "char* concatCD(char *s1, double i) {\n" +
+                    "char *s;\n" +
+                    "sprintf(s, \"%s%.2f\", s1, i);\n" +
+                    "return s;\n" +
+                    "}" +
+                    "" +
+                    "char* concatCD(double i, char *s1) {\n" +
+                    "char *s;\n" +
+                    "sprintf(s, \"%.2f%s\", i, s1);\n" +
+                    "return s;\n" +
+                    "}" +
+                    "" +
+                    "char* concatCI(char *s1, int i) {\n" +
+                    "char *s;\n" +
+                    "sprintf(s, \"%s%d\", s1, i);\n" +
+                    "return s;\n" +
+                    "}" +
+                    "" +
+                    "char* concatIC(int i, char *s1) {\n" +
+                    "char *s;\n" +
+                    "sprintf(s, \"%d%s\", i, s1);\n" +
+                    "return s;\n" +
+                    "}";
 
     private TreeSymbolTable symbolTable;
     private StringBuilder mallocString = new StringBuilder();
@@ -51,7 +78,7 @@ public class CodeVisitor implements Visitor{
 
 
         programBuilder.append(C_HEADER).append('\n').append(DECL_HEADER).append('\n')
-                .append(declarations).append('\n').append(functions).append('\n').
+                .append(declarations).append('\n').append(DEFAULT_FUNCTION).append("\n").append(functions).append('\n').
                 append(main).append('\n');
 
         return programBuilder.toString();
@@ -64,14 +91,17 @@ public class CodeVisitor implements Visitor{
         String declarations = "";
         String statements = "";
 
+        mainBuilder.append("int main(void){\n\t");
         for (VarDeclOp var: Main.getListVarDecl()) {
-            declarations += (String) var.accept(this);
+            declarations = (String) var.accept(this);
+            mainBuilder.append(declarations).append("\n\t");
         }
         for (Statement stm : Main.getListStatement()) {
-            statements += (String) stm.accept(this);
+            statements = (String) stm.accept(this);
+            mainBuilder.append(statements).append("\n\t");
         }
 
-        mainBuilder.append("int main(void){\n").append("\n").append(declarations).append("\n").append(statements).append("\n").append(" return 0;\n}\n");
+        mainBuilder.append(" return 0;\n}\n");
 
         return mainBuilder.toString();
     }
@@ -86,12 +116,12 @@ public class CodeVisitor implements Visitor{
         if(VarDecl.getType()!=null) {
             type = (String) VarDecl.getType().accept(this);
             listInit = (String) VarDecl.getListInit().accept(this);
-            return varDeclBuilder.append(type).append(listInit).append("\n").toString();
+            return varDeclBuilder.append(type).append(listInit).toString();
         }
         else // case typeOp is var
         {
             listInit = (String) VarDecl.getListInit().accept(this);
-            return varDeclBuilder.append(listInit).append("\n").toString();
+            return varDeclBuilder.append(listInit).toString();
         }
 
     }
@@ -214,15 +244,19 @@ public class CodeVisitor implements Visitor{
 
         paramDecl = (String) Fun.getListParam().accept(this);
 
+        funBuilder.append(return_type).append(" ").append(Fun.getId()).append("(").append(paramDecl).append(")\n{\n\t");
+
 
         for (VarDeclOp var: Fun.getListVarDecl()) {
-            declarations += (String) var.accept(this);
+            declarations = (String) var.accept(this);
+            funBuilder.append(declarations).append("\n\t");
         }
         for (Statement stm : Fun.getListStatement()) {
-            statements += (String) stm.accept(this);
+            statements = (String) stm.accept(this);
+            funBuilder.append(statements).append("\n\t");
         }
 
-       return funBuilder.append(return_type).append(" ").append(Fun.getId()).append("(").append(paramDecl).append(")\n{\n").append(declarations).append("\n").append(statements).append("\n}\n").toString();
+       return funBuilder.append("\n}\n").toString();
     }
 
     @Override
@@ -271,42 +305,51 @@ public class CodeVisitor implements Visitor{
         String statements = "";
         String elseOp = "";
 
+        expression = (String) IfStat.getExpression().accept(this);
+        ifBuilder.append("if(").append(expression).append("){\n\t\t");
+
         for (VarDeclOp var: IfStat.getListVarDeclOp())
         {
-            declarations += (String) var.accept(this);
+            declarations = (String) var.accept(this);
+            ifBuilder.append(declarations).append("\n").append("\t\t");
         }
 
-        expression = (String) IfStat.getExpression().accept(this);
 
         for (Statement stm:IfStat.getListStatement() )
         {
-            statements += (String) stm.accept(this);
+            statements = (String) stm.accept(this);
+            ifBuilder.append(statements).append("\n\t\t");
         }
 
-        if(!elseOp.isEmpty()) elseOp= (String) IfStat.getElseStatOp().accept(this);
+        if(!IfStat.getElseStatOp().isEmpty()) elseOp= (String) IfStat.getElseStatOp().accept(this);
         else elseOp="";
 
-        return ifBuilder.append("if(").append(expression).append(")\n{\n").append(declarations).append("\n").append(statements).append("\n}\n").append(elseOp).toString();
+        return ifBuilder.append("\n\t}\n").append(elseOp).toString();
 
     }
 
     @Override
-    public Object visit(ElseStatOp Else) throws Exception {
+    public Object visit(ElseStatOp Else) throws Exception
+    {
         StringBuilder elseBuilder = new StringBuilder();
         String declarations = "";
         String statements = "";
 
+        elseBuilder.append("else{\n\t");
 
         for (VarDeclOp var: Else.getListVar())
         {
-            declarations += (String) var.accept(this);
+            declarations = (String) var.accept(this);
+            elseBuilder.append(declarations).append("\n").append("\t\t");
         }
 
         for (Statement stm:Else.getListStat() )
         {
-            statements += (String) stm.accept(this);
+            statements = (String) stm.accept(this);
+            elseBuilder.append(statements).append("\n\t\t");
         }
-        return elseBuilder.append("else\n{\n").append(declarations).append("\n").append(statements).append("\n}\n").toString();
+        elseBuilder.append("\n\t}\n");
+        return elseBuilder.toString();
     }
 
     @Override
@@ -317,27 +360,32 @@ public class CodeVisitor implements Visitor{
         String expression = "";
         String statements = "";
 
+        whileBuilder.append("while(");
+        expression = (String) WhileStat.getExpression().accept(this);
+        whileBuilder.append(expression).append("){\n\t\t");
 
         for (VarDeclOp var: WhileStat.getVarDeclListOp())
         {
-            declarations += (String) var.accept(this);
+            declarations = (String) var.accept(this);
+            whileBuilder.append(declarations).append("\n").append("\t\t");
         }
 
-        expression = (String) WhileStat.getExpression().accept(this);
+
 
         for (Statement stm:WhileStat.getListStatement() )
         {
-            statements += (String) stm.accept(this);
+            statements = (String) stm.accept(this);
+            whileBuilder.append(statements).append("\n\t\t");
         }
 
-        return whileBuilder.append("while(").append(expression).append(")\n{\n").append(declarations).append("\n").append(statements).append("\n}\n").toString();
+        return whileBuilder.append("\n\t}\n").toString();
     }
 
     @Override
     public Object visit(ReadStatOp ReadStat) throws Exception {
 
         StringBuilder builder = new StringBuilder();
-        String expr = "", idList = "";
+        String expr = "\"\"", idList = "";
         String listFormat = "";
         if (ReadStat.getExpression() != null){
             expr = (String) ReadStat.getExpression().accept(this);
@@ -347,12 +395,12 @@ public class CodeVisitor implements Visitor{
         int i = 1;
         for (ID id  : ReadStat.getListId()){
 
-            listFormat += getFormatReturType(id.getNodeType());
+            listFormat += getFormatReturnType(id.getNodeType());
             idList += "&" + (String) id.accept(this) ;
             if(ReadStat.getListId().size() != i) idList += ",";
             i++;
         }
-        builder.append("printf(").append(expr).append(");").append("\n");
+        builder.append("printf(").append(expr).append(");").append("\n\t");
         return builder.append("scanf(").append( "\"" + listFormat + "\"").append(",").append(idList).append(");").toString();
     }
 
@@ -361,23 +409,25 @@ public class CodeVisitor implements Visitor{
     {
         StringBuilder builder = new StringBuilder();
         String expr = (String) WriteStat.getExpression().accept(this);
+        ReturnType type = ((SyntaxtNode)WriteStat.getExpression()).getNodeType();
+        String typeString = getFormatReturnType(type);
         String write = "";
 
         if(WriteStat.getType()==WriteStatOp.TypeWrite.WRITE)
         {
-            builder.append("printf(").append(expr).append(");");
+            builder.append("printf(").append("\""+typeString+"\",").append(expr).append(");");
         }
         else if(WriteStat.getType()==WriteStatOp.TypeWrite.WRITELN)
         {
-            builder.append("printf(").append(expr).append("\n").append(");");
+            builder.append("printf(").append("\""+typeString+"\\n\",").append(expr).append(");");
         }
         else if(WriteStat.getType()==WriteStatOp.TypeWrite.WRITET)
         {
-            builder.append("printf(").append(expr).append("\t").append(");");
+            builder.append("printf(").append("\""+typeString+"\\t\",").append(expr).append(");");
         }
         else
         { //case WriteB
-            builder.append("printf(").append(expr).append("\b").append(");");
+            builder.append("printf(").append("\""+typeString+"\\b\",").append(expr).append(");");
         }
         return builder.toString();
     }
@@ -396,7 +446,18 @@ public class CodeVisitor implements Visitor{
     @Override
     public Object visit(CallFunOp CallFun) throws Exception
     {
-        return null;
+        StringBuilder callBuilder = new StringBuilder();
+        String id = (String) CallFun.getId().accept(this);
+        String listExpression = "";
+        int i=1;
+
+        for (Expression e:CallFun.getListExpression()) {
+            listExpression += e.accept(this);
+            if( i != CallFun.getListExpression().size() ) listExpression += ",";
+            i++;
+        }
+
+        return callBuilder.append(id).append("(").append(listExpression).append(")").toString();
     }
 
     @Override
@@ -407,14 +468,109 @@ public class CodeVisitor implements Visitor{
     }
 
     @Override
-    public Object visit(BinaryOperation binaryOperation) throws Exception {
-        return null;
+    public Object visit(BinaryOperation binaryOperation) throws Exception
+    {
+        StringBuilder builder = new StringBuilder();
+        String exp1 = (String) binaryOperation.getE1().accept(this);
+        String exp2 = (String) binaryOperation.getE2().accept(this);
+
+        ReturnType typeExp1 = ((SyntaxtNode)binaryOperation.getE1()).getNodeType();
+        ReturnType typeExp2 = ((SyntaxtNode)binaryOperation.getE2()).getNodeType();
+
+        BinaryOperation.BinaryOperationType operationType = binaryOperation.getType();
+
+        if( operationType == BinaryOperation.BinaryOperationType.AddOp )
+        {
+            builder.append(exp1).append("+").append(exp2);
+        }
+        else if(operationType == BinaryOperation.BinaryOperationType.MulOp)
+        {
+            builder.append(exp1).append("*").append(exp2);
+        }
+        else if(operationType == BinaryOperation.BinaryOperationType.DiffOp)
+        {
+            builder.append(exp1).append("-").append(exp2);
+        }
+        else if(operationType == BinaryOperation.BinaryOperationType.DivOp)
+        {
+            builder.append(exp1).append("/").append(exp2);
+        }
+        else if(operationType == BinaryOperation.BinaryOperationType.LTOp)
+        {
+            builder.append(exp1).append("<").append(exp2);
+        }
+        else if(operationType == BinaryOperation.BinaryOperationType.LEOp)
+        {
+            builder.append(exp1).append("<=").append(exp2);
+        }
+        else if(operationType == BinaryOperation.BinaryOperationType.GEOp)
+        {
+            builder.append(exp1).append(">=").append(exp2);
+        }
+        else if(operationType == BinaryOperation.BinaryOperationType.GTOp)
+        {
+            builder.append(exp1).append(">").append(exp2);
+        }
+        else if(operationType == BinaryOperation.BinaryOperationType.EQOp)
+        {
+            builder.append(exp1).append("==").append(exp2);
+        }
+        else if(operationType == BinaryOperation.BinaryOperationType.AndOp)
+        {
+            builder.append(exp1).append("&&").append(exp2);
+        }
+        else if(operationType == BinaryOperation.BinaryOperationType.OrOp)
+        {
+            builder.append(exp1).append("||").append(exp2);
+        }
+        else if(operationType== BinaryOperation.BinaryOperationType.StrCatOp)
+        {
+            if(typeExp1== ReturnType.STRING && typeExp2== ReturnType.STRING)
+            {
+                builder.append("strcat(" + exp1 +"," + exp2 + ")");
+            }
+            if(typeExp1== ReturnType.STRING && typeExp2== ReturnType.INT)
+            {
+                builder.append("concatCI(" + exp1 +"," + exp2 + ")");
+            }
+            if(typeExp1== ReturnType.INT && typeExp2== ReturnType.STRING)
+            {
+                builder.append("concatIC(" + exp1 +"," + exp2 + ")");
+            }
+            if(typeExp1== ReturnType.REAL && typeExp2== ReturnType.STRING)
+            {
+                builder.append("concatDC(" + exp1 +"," + exp2 + ")");
+            }
+            if(typeExp1== ReturnType.STRING && typeExp2== ReturnType.REAL)
+            {
+                builder.append("concatCD(" + exp1 +"," + exp2 + ")");
+            }
+
+        }
+        else if(operationType== BinaryOperation.BinaryOperationType.DivIntOp )
+        {
+            builder.append(exp1).append("%").append(exp2);
+        }
+        else if(operationType== BinaryOperation.BinaryOperationType.PowOp)
+        {
+            builder.append("pow(").append(exp1).append(",").append(exp2).append(")");
+        }
+        return builder.toString();
     }
 
     @Override
     public Object visit(UnaryOperation unaryOperation) throws Exception
     {
-        return null;
+        StringBuilder builder = new StringBuilder();
+        String expression = (String) unaryOperation.getE1().accept(this);
+
+        if(unaryOperation.getType() == UnaryOperation.UnaryOperationType.NotOp){
+            builder.append("!(").append(expression).append(")");
+        }
+        else if(unaryOperation.getType() == UnaryOperation.UnaryOperationType.UminusOp) {
+            builder.append("-(").append(expression).append(")");
+        }
+        return builder.toString();
     }
 
     @Override
@@ -450,7 +606,7 @@ public class CodeVisitor implements Visitor{
         return type;
     }
 
-    public static String getFormatReturType(ReturnType rt){
+    public static String getFormatReturnType(ReturnType rt){
 
         String type = "";
         if(rt == ReturnType.STRING)

@@ -60,8 +60,8 @@ public class CompatibilityType {
             };
     public static ReturnType DIVINT_POW[][] =
             {
-                    { ReturnType.INT, ReturnType.UNDEFINED, ReturnType.UNDEFINED,ReturnType.UNDEFINED},
-                    { ReturnType.UNDEFINED, ReturnType.UNDEFINED, ReturnType.UNDEFINED,ReturnType.UNDEFINED},
+                    { ReturnType.INT, ReturnType.INT, ReturnType.UNDEFINED,ReturnType.UNDEFINED},
+                    { ReturnType.INT, ReturnType.INT, ReturnType.UNDEFINED,ReturnType.UNDEFINED},
                     { ReturnType.UNDEFINED,ReturnType.UNDEFINED,ReturnType.UNDEFINED, ReturnType.UNDEFINED},
                     { ReturnType.UNDEFINED,ReturnType.UNDEFINED,ReturnType.UNDEFINED, ReturnType.UNDEFINED }
 

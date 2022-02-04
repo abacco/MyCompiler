@@ -44,7 +44,7 @@ public class SymbolTableVisitor implements Visitor{
                 if(par.getType()==ParDeclOp.ParType.IN) parType=ParType.IN;
                 if(par.getType()==ParDeclOp.ParType.OUT) parType=ParType.OUT;
 
-                listParamType.add(new ParamType(returnType, parType));
+                listParamType.add(0, new ParamType(returnType, parType));
             }
 
             symbolTable.add(funOp.getId().getName(), new FunctionKind(funReturnType, listParamType) );

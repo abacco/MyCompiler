@@ -41,7 +41,7 @@ ID = [$_A-Za-z][$_A-Za-z0-9]*
 /* Numbers */
 digit = [0-9]
 Integer = {digit}+
-Real = ({Integer}(\.{digit}+)?)|((\+|-)?\.?{digit}+)
+Real = ({Integer}(\.{digit}+))|((\+|-)?\.{digit}+)
 
 /* Comments */
 Comment = {Comment_SingleLine} | {Comment_MultiLine}

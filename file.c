@@ -6,42 +6,82 @@
 #define LENGTH  2048
 char str1[LENGTH], str2[LENGTH];
 
-bool flag=true;
-
-double divisione(double b, double a)
+int c=1;
+char* concatCD(char *s1, double i) {
+char *s;
+sprintf(s, "%s%.2f", s1, i);
+return s;
+}char* concatCD(double i, char *s1) {
+char *s;
+sprintf(s, "%.2f%s", i, s1);
+return s;
+}char* concatCI(char *s1, int i) {
+char *s;
+sprintf(s, "%s%d", s1, i);
+return s;
+}char* concatIC(int i, char *s1) {
+char *s;
+sprintf(s, "%d%s", i, s1);
+return s;
+}
+double sommac(char *size, double b, int a)
 {
-double result=a;
+	double result;
+	result = a+b+c;
+	if(result>100){
+		char *valore="grande";
+		size = valore;
+		
+	}
+else{
+	char *valore="piccola";
+		size = valore;
+		
+	}
 
-return result;
+	return result;
+	
 }
 void stampa(char *messaggio)
 {
-int i=1;
+	int i=1;
+	while(i<=4){
+		int incremento=1;
+		printf("%s\n","");
+		i = i+incremento;
+		
+	}
 
-while(true)
-{
-int incremento=1;
-
-i = incremento;
-}
-
+	printf("%s\n",messaggio);
+	
 }
 
 int main(void){
+	int a=1;
+double b=2.2;
+	char *taglia;
+	char *ans="no";
+	double risultato=sommac(a,b,(*taglia));
+	stampa(strcat(strcat(concatCI(strcat(concatCD(strcat(concatCI("la somma di ",a)," e "),b)," incrementata di "),c)," è "),taglia))
+	stampa(concatCD("ed è pari a ",risultato))
+	printf("%s\t","vuoi continuare? (si/no)");
+	printf();
+	scanf("%s",&ans);
+	while(ans=="si"){
+		printf("inserisci un intero:");
+	scanf("%d",&a);
+		printf("inserisci un reale:");
+	scanf("%f",&b);
+		risultato = sommac(a,b,(*taglia));
+		stampa(strcat(strcat(concatCI(strcat(concatCD(strcat(concatCI("la somma di ",a)," e "),b)," incrementata di "),c)," è "),taglia))
+		stampa(concatCD(" ed è pari a ",risultato))w
+		printf("vuoi continuare? (si/no):\t");
+	scanf("%s",&ans);
+		
+	}
 
-char *m1="ciao2";
-int mercos=2;
-char *m="ciao";
-double i,  ok=22.2;
-int f;
-
-if(flag)
-{
-
-printf("ciao");
-scanf("%d%f",&f,&i);
-}
-
- return 0;
+	printf("%s\n","");
+	printf("%s","ciao");
+	 return 0;
 }
 

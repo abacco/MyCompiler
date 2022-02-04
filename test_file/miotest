@@ -17,7 +17,7 @@ end fun;
 
 main
 real i , ok := 22.2;
-string m:='ciao';
+string m:='ciao' & 'miao';
 var m1 := 'ciao2', mercos:=2;
 integer f;
 

@@ -16,6 +16,8 @@ import Semantic.Enum.ParType;
 import Semantic.Enum.ReturnType;
 import jdk.nashorn.internal.codegen.CompilerConstants;
 
+import java.util.Collections;
+
 public class TypeCheckingVisitor implements Visitor {
     private final ISymbolTable symbolTable;
 
@@ -25,6 +27,7 @@ public class TypeCheckingVisitor implements Visitor {
 
     @Override
     public Object visit(ProgramOp Program) throws Exception {
+        Collections.reverse(Program.getListVarDecl());
 
         for (VarDeclOp el: Program.getListVarDecl()){
             ReturnType e = (ReturnType) el.accept(this);
@@ -202,6 +205,8 @@ public class TypeCheckingVisitor implements Visitor {
             ReturnType typeS = (ReturnType) el.accept(this);
             if(typeS != ReturnType.NO_TYPE) throw new Exception("Gli statement non devono ritornare alcun tipo");
         }
+        if(!IfStat.getElseStatOp().isEmpty()) IfStat.getElseStatOp().accept(this);
+
 
 
         IfStat.setNodeType(ReturnType.NO_TYPE);
@@ -246,7 +251,10 @@ public class TypeCheckingVisitor implements Visitor {
     @Override
     public Object visit(ReadStatOp ReadStat) throws Exception {
         ReturnType typeE=null;
-        if(ReadStat.getExpression() != null) typeE= (ReturnType) ReadStat.getExpression().accept(this);
+        if(ReadStat.getExpression() != null){
+            typeE= (ReturnType) ReadStat.getExpression().accept(this);
+            if(typeE != ReturnType.STRING) throw new Exception("La funzione read accetta un'espressione di tipo STRING, mentre l'espressione è di tipo " + typeE);
+        }
 
         for (ID el: ReadStat.getListId()){
             ReturnType typeID= (ReturnType) el.accept(this);
