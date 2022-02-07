@@ -11,10 +11,11 @@ import Node.Expression.CallFunOp;
 import Node.Expression.Expression;
 import Node.Expression.UnaryOperation;
 import Node.Statement.*;
-import Semantic.CompatibilityType;
+import Semantic.*;
+import Semantic.Enum.ParType;
 import Semantic.Enum.ReturnType;
-import Semantic.FunctionKind;
-import Semantic.TreeSymbolTable;
+
+import java.util.Collections;
 
 public class CodeVisitor implements Visitor{
     private static final String C_HEADER =
@@ -24,25 +25,25 @@ public class CodeVisitor implements Visitor{
     private static final String DECL_HEADER =  "#define LENGTH  2048\n" + "char str1[LENGTH], str2[LENGTH];\n";
     private static final String DEFAULT_FUNCTION =
             "char* concatCD(char *s1, double i) {\n" +
-                    "char *s;\n" +
+                    "char s[LENGTH];\n" +
                     "sprintf(s, \"%s%.2f\", s1, i);\n" +
                     "return s;\n" +
                     "}" +
                     "" +
-                    "char* concatCD(double i, char *s1) {\n" +
-                    "char *s;\n" +
+                    "char* concatDC(double i, char *s1) {\n" +
+                    "char s[LENGTH];\n" +
                     "sprintf(s, \"%.2f%s\", i, s1);\n" +
                     "return s;\n" +
                     "}" +
                     "" +
                     "char* concatCI(char *s1, int i) {\n" +
-                    "char *s;\n" +
+                    "char s[LENGTH];\n" +
                     "sprintf(s, \"%s%d\", s1, i);\n" +
                     "return s;\n" +
                     "}" +
                     "" +
                     "char* concatIC(int i, char *s1) {\n" +
-                    "char *s;\n" +
+                    "char s[LENGTH];\n" +
                     "sprintf(s, \"%d%s\", i, s1);\n" +
                     "return s;\n" +
                     "}";
@@ -98,7 +99,9 @@ public class CodeVisitor implements Visitor{
         }
         for (Statement stm : Main.getListStatement()) {
             statements = (String) stm.accept(this);
-            mainBuilder.append(statements).append("\n\t");
+            mainBuilder.append(statements);
+            if(stm instanceof CallFunOp ) mainBuilder.append(";");
+            mainBuilder.append("\n\t");
         }
 
         mainBuilder.append(" return 0;\n}\n");
@@ -183,7 +186,7 @@ public class CodeVisitor implements Visitor{
             String id = key;
             ReturnType varType = symbolTable.lookup(IdListInit.getAttachScope(), key).getReturnType();
 
-            if(varType==ReturnType.STRING) id = "*" + key;
+            if(varType==ReturnType.STRING) id =  key + "[LENGTH]";
 
             if (IdListInit.getList().get(key) != null) {
                 expression = (String) IdListInit.getList().get(key).accept(this);
@@ -213,7 +216,7 @@ public class CodeVisitor implements Visitor{
 
             String id = key;
             String type =convertReturnType_ToTypeC(symbolTable.lookup(IdListInitObbl.getAttachScope(), key).getReturnType());
-            if(type.equals("char")) id = "*" + key;
+            if(type.equals("char")) id =  key + "[LENGTH]";
 
             expression = (String) IdListInitObbl.getList().get(key).accept(this);
             listInit.append(type).append(" ").append(id).append("=").append(expression);
@@ -253,7 +256,9 @@ public class CodeVisitor implements Visitor{
         }
         for (Statement stm : Fun.getListStatement()) {
             statements = (String) stm.accept(this);
-            funBuilder.append(statements).append("\n\t");
+            funBuilder.append(statements);
+            if(stm instanceof CallFunOp ) funBuilder.append(";");
+            funBuilder.append("\n\t");
         }
 
        return funBuilder.append("\n}\n").toString();
@@ -264,7 +269,7 @@ public class CodeVisitor implements Visitor{
     {
         StringBuilder parBuilder = new StringBuilder();
         int i=1;
-
+        Collections.reverse(ParamDeclList.getListParDecl());
         for (ParDeclOp el: ParamDeclList.getListParDecl())
         {
 
@@ -285,8 +290,9 @@ public class CodeVisitor implements Visitor{
         String type = (String) ParDecl.getTypeOp().accept(this);
         String id = (String) ParDecl.getId();
 
+
         if(ParDecl.getType() == ParDeclOp.ParType.OUT || type.equals("char")){
-            parBuilder.append(type).append(" ").append("*" + id);
+        parBuilder.append(type).append(" ").append("*" + id);
         }
         else
         {
@@ -318,7 +324,9 @@ public class CodeVisitor implements Visitor{
         for (Statement stm:IfStat.getListStatement() )
         {
             statements = (String) stm.accept(this);
-            ifBuilder.append(statements).append("\n\t\t");
+            ifBuilder.append(statements);
+            if(stm instanceof CallFunOp ) ifBuilder.append(";");
+            ifBuilder.append("\n\t\t");
         }
 
         if(!IfStat.getElseStatOp().isEmpty()) elseOp= (String) IfStat.getElseStatOp().accept(this);
@@ -346,7 +354,9 @@ public class CodeVisitor implements Visitor{
         for (Statement stm:Else.getListStat() )
         {
             statements = (String) stm.accept(this);
-            elseBuilder.append(statements).append("\n\t\t");
+            elseBuilder.append(statements);
+            if(stm instanceof CallFunOp ) elseBuilder.append(";");
+            elseBuilder.append("\n\t\t");
         }
         elseBuilder.append("\n\t}\n");
         return elseBuilder.toString();
@@ -375,7 +385,9 @@ public class CodeVisitor implements Visitor{
         for (Statement stm:WhileStat.getListStatement() )
         {
             statements = (String) stm.accept(this);
-            whileBuilder.append(statements).append("\n\t\t");
+            whileBuilder.append(statements);
+            if(stm instanceof CallFunOp ) whileBuilder.append(";");
+            whileBuilder.append("\n\t\t");
         }
 
         return whileBuilder.append("\n\t}\n").toString();
@@ -396,7 +408,10 @@ public class CodeVisitor implements Visitor{
         for (ID id  : ReadStat.getListId()){
 
             listFormat += getFormatReturnType(id.getNodeType());
-            idList += "&" + (String) id.accept(this) ;
+
+            if(id.getNodeType()==ReturnType.STRING)idList +=  (String) id.accept(this) ;
+            else idList += "&" + (String) id.accept(this) ;
+
             if(ReadStat.getListId().size() != i) idList += ",";
             i++;
         }
@@ -412,6 +427,7 @@ public class CodeVisitor implements Visitor{
         ReturnType type = ((SyntaxtNode)WriteStat.getExpression()).getNodeType();
         String typeString = getFormatReturnType(type);
         String write = "";
+
 
         if(WriteStat.getType()==WriteStatOp.TypeWrite.WRITE)
         {
@@ -437,9 +453,10 @@ public class CodeVisitor implements Visitor{
     {
         StringBuilder builder = new StringBuilder();
         String id = (String) AssignStat.getId().accept(this);
-        String expression = (String) AssignStat.getExpression().accept(this);
 
-        return builder.append(id).append(" = ").append(expression).append(";").toString();
+        String expression = (String) AssignStat.getExpression().accept(this);
+        if(AssignStat.getId().getNodeType() == ReturnType.STRING) return builder.append("strcpy(").append(id).append(",").append(expression).append(");").toString();
+        else return builder.append(id).append(" = ").append(expression).append(";").toString();
 
     }
 
@@ -450,21 +467,31 @@ public class CodeVisitor implements Visitor{
         String id = (String) CallFun.getId().accept(this);
         String listExpression = "";
         int i=1;
+        callBuilder.append(id).append("(");
+        for (Expression e:CallFun.getListExpression())
+        {
+            listExpression = (String) e.accept(this);
 
-        for (Expression e:CallFun.getListExpression()) {
-            listExpression += e.accept(this);
-            if( i != CallFun.getListExpression().size() ) listExpression += ",";
+            if(e instanceof ID)
+            {
+                if(((ID) e).getNodeType() == ReturnType.STRING)  callBuilder.append(listExpression);
+                else if(((ID) e).isOutPar()) callBuilder.append("&").append(listExpression);
+                else callBuilder.append(listExpression);
+            }
+            else callBuilder.append(listExpression);
+
+            if( i != CallFun.getListExpression().size()) callBuilder.append(",");
             i++;
         }
 
-        return callBuilder.append(id).append("(").append(listExpression).append(")").toString();
+        return callBuilder.append(")").toString();
     }
 
     @Override
     public Object visit(ID id) throws Exception
     {
-        if(id.isOutPar()) return "(*" + id.getName() + ")";
-        else return id.getName();
+
+        return id.getName();
     }
 
     @Override
@@ -513,7 +540,9 @@ public class CodeVisitor implements Visitor{
         }
         else if(operationType == BinaryOperation.BinaryOperationType.EQOp)
         {
-            builder.append(exp1).append("==").append(exp2);
+            if(typeExp1==ReturnType.STRING && typeExp2==ReturnType.STRING )
+            builder.append("(strcmp(").append(exp1).append(",").append(exp2).append(")==0)");
+            else builder.append(exp1).append("==").append(exp2);
         }
         else if(operationType == BinaryOperation.BinaryOperationType.AndOp)
         {
@@ -619,7 +648,7 @@ public class CodeVisitor implements Visitor{
         }
         else if(rt == ReturnType.REAL)
         {
-            type="%f";
+            type="%lf";
         }
 
         return type;

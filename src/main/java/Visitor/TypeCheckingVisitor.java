@@ -301,8 +301,8 @@ public class TypeCheckingVisitor implements Visitor {
 
             for(int i=0; i<funKind.getListParm().size(); i++)
             {
-                ParamType p = funKind.getListParm().get(0);
-                Expression el = CallFun.getListExpression().get(0);
+                ParamType p = funKind.getListParm().get(i);
+                Expression el = CallFun.getListExpression().get(i);
                 ReturnType returnTypeExpression = (ReturnType) el.accept(this);
                 if(el instanceof ID)
                 {
