@@ -280,6 +280,9 @@ public class CodeVisitor implements Visitor{
         if(Fun.getType()==null) return_type = "void";
         else return_type = (String) Fun.getType().accept(this);
 
+        if(return_type.equals("char")){
+            return_type =  "char*";
+        }
 
         paramDecl = (String) Fun.getListParam().accept(this);
 
@@ -350,6 +353,7 @@ public class CodeVisitor implements Visitor{
         expression = (String) IfStat.getExpression().accept(this);
         ifBuilder.append("if(").append(expression).append("){\n\t\t");
 
+        // if scope is global ...
         for (VarDeclOp var: IfStat.getListVarDeclOp())
         {
             declarations = (String) var.accept(this);

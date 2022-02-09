@@ -1,0 +1,70 @@
+# provare i param out (passati per rif)
+# prova le stringhe out e in
+# operazione con cast su c (es, somma tra real e int e assegnare il val ad un intero)
+
+# testare le global string, assegnagli string
+# var s := 'questa è una stringa 1123òòjjj10'; - fix
+
+# l'utente indica il nome del nemico -> enemy_name
+# l'utente indica il suo nome -> user_name
+# in output lo stato del combattimento (ad es. "ha usato la mossa x" -> out fight_state)
+# vita del nemico e dell'utente -> enemy_lp, user_lp
+# vi è un presentatore che fa la cronaca del match con frasi di default
+
+
+bool enemy_lost := false;
+
+fun askName(out string enemy_name): string
+    string user_name;
+    % user_name 'Dimmi il tuo nome ' ;
+    % enemy_name 'Il tuo nemico è ? ' ;
+        return user_name;
+end fun;
+
+fun startDialogue(string enemy_name, string user_name)
+    ?. 'benvenuti al match tra ' & enemy_name & ' e ' & user_name ;
+    ?. 'Ora inizia il combattimento! ';
+end fun;
+
+fun fight(string enemy_name, integer damage, out integer enemy_life)
+    enemy_life := enemy_life - damage;
+    ?. enemy_name & ' ha incassato un attacco ed ha preso ' &  damage & ' danni, ora la sua vita è ' & enemy_life;
+    checkEnemyLife(enemy_name, enemy_life);
+end fun;
+
+fun checkEnemyLife(string enemy_name, integer enemy_life)
+    if enemy_life <= 0 then enemy_lost := true; ?. enemy_name & ' è stato sconfitto ' ;
+    else ?. 'il nemico è ancora in piedi!';
+    end if;
+end fun;
+
+fun selectMove() : integer
+    integer move;
+    ?. 'Scegli la tua mossa! :';
+    ?. '1 pugno - 2';
+    ?. '2 calcio - 5';
+    ?. '3 insulto - 0';
+    % move;
+    if move = 1 then return 2;
+    end if;
+    if move = 2 then return 5;
+    end if;
+    if move = 3 then return 0;
+    else ?. 'Non fai nulla '; return 0;
+    end if;
+end fun;
+
+main
+    string enemy_name, user_name;
+    var enemy_life := 10;
+
+    user_name := askName(@enemy_name);
+    startDialogue(enemy_name, user_name);
+        while not enemy_lost loop
+            integer damage;
+            damage := selectMove();
+            fight(enemy_name, damage, @enemy_life);
+        end loop;
+    ?. 'battaglia conclusa';
+end main;
+

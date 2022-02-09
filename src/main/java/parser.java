@@ -462,7 +462,7 @@ public class parser extends java_cup.runtime.lr_parser {
       action_obj = new CUP$parser$actions(this);
     }
 
-  /** Invoke a user supplied parse action. */
+  /** Invoke aFightGame user supplied parse action. */
   public java_cup.runtime.Symbol do_action(
     int                        act_num,
     java_cup.runtime.lr_parser parser,

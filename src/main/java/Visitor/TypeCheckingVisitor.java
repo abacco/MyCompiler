@@ -303,7 +303,7 @@ public class TypeCheckingVisitor implements Visitor {
 
         FunctionKind funKind = (FunctionKind) symbolTable.lookup(CallFun.getAttachScope(),CallFun.getId().getName());
 
-        if(CallFun.getListExpression().size() != funKind.getListParm().size()) throw new Exception("Stai provando a chiamare la funzione " + CallFun.getId().getName() + " passando più argomenti dei parametri definiti nella funzione.");
+        if(CallFun.getListExpression().size() != funKind.getListParm().size()) throw new Exception("Stai provando aFightGame chiamare la funzione " + CallFun.getId().getName() + " passando più argomenti dei parametri definiti nella funzione.");
 
             for(int i=0; i<funKind.getListParm().size(); i++)
             {

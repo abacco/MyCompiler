@@ -6,8 +6,7 @@
 
 #define LENGTH  2048
 
-int c=1;
-
+bool enemy_lost=false;
 char* concatCD(char *s1, double i) {
 char *s=malloc(sizeof(char) * LENGTH);
 sprintf(s, "%s%.2f", s1, i);
@@ -43,72 +42,89 @@ strcat(s, str1);
 
 return s;
 }
-double sommac(int a, double b, char *size)
+char* askName(char *enemy_name)
 {
-	double result;
-	result = a+b+c;
-	if(result>100){
-		char *valore=malloc(sizeof(char)*LENGTH);
-strcpy(valore,"grande");
-
-		strcpy(size,valore);
+	char *user_name=malloc(sizeof(char)*LENGTH);
+	printf("Dimmi il tuo nome ");
+	scanf("%s",user_name);
+	printf("Il tuo nemico è ? ");
+	scanf("%s",enemy_name);
+	return user_name;
+	
+}
+void startDialogue(char *enemy_name, char *user_name)
+{
+	printf("%s\n",concat(concat(concat("benvenuti al match tra ",enemy_name)," e "),user_name));
+	printf("%s\n","Ora inizia il combattimento! ");
+	
+}
+void fight(char *enemy_name, int damage, int *enemy_life)
+{
+	*enemy_life = *enemy_life-damage;
+	printf("%s\n",concatCI(concat(concatCI(concat(enemy_name," ha incassato un attacco ed ha preso "),damage)," danni, ora la sua vita è "),*enemy_life));
+	checkEnemyLife(copy_string(enemy_name),*enemy_life);
+	
+}
+void checkEnemyLife(char *enemy_name, int enemy_life)
+{
+	if(enemy_life<=0){
+		enemy_lost = true;
+		printf("%s\n",concat(enemy_name," è stato sconfitto "));
 		
 	}
 else{
-	char *valore=malloc(sizeof(char)*LENGTH);
-strcpy(valore,"piccola");
-
-		strcpy(size,valore);
+	printf("%s\n","il nemico è ancora in piedi!");
 		
 	}
 
-	return result;
 	
 }
-void stampa(char *messaggio)
+int selectMove()
 {
-	int i=1;
-	while(i<=4){
-		int incremento=1;
-
-		printf("%s\n","");
-		i = i+incremento;
+	int move;
+	printf("%s\n","Scegli la tua mossa! :");
+	printf("%s\n","1 pugno - 2");
+	printf("%s\n","2 calcio - 5");
+	printf("%s\n","3 insulto - 0");
+	printf("");
+	scanf("%d",&move);
+	if(move==1){
+		return 2;
 		
 	}
 
-	printf("%s\n",messaggio);
+	if(move==2){
+		return 5;
+		
+	}
+
+	if(move==3){
+		return 0;
+		
+	}
+else{
+	printf("%s\n","Non fai nulla ");
+		return 0;
+		
+	}
+
 	
 }
 
 int main(void){
-	int a=1;
-double b=2.2;
+	char *enemy_name=malloc(sizeof(char)*LENGTH),  *user_name=malloc(sizeof(char)*LENGTH);
+	int enemy_life=10;
 
-	char *taglia=malloc(sizeof(char)*LENGTH);
-	char *ans=malloc(sizeof(char)*LENGTH);
-    strcpy(ans,"no");
-
-	double risultato=sommac(a,b,taglia);
-	stampa(concat(concat(concatCI(concat(concatCD(concat(concatCI("la somma di ",a)," e "),b)," incrementata di "),c)," è "),taglia));
-	stampa(concatCD("ed è pari a ",risultato));
-	printf("%s\t","vuoi continuare? (si/no)");
-	printf("");
-	scanf("%s",ans);
-	while((strcmp(ans,"si")==0)){
-		printf("inserisci un intero:");
-	scanf("%d",&a);
-		printf("inserisci un reale:");
-	scanf("%lf",&b);
-		risultato = sommac(a,b,taglia);
-		stampa(concat(concat(concatCI(concat(concatCD(concat(concatCI("la somma di ",a)," e "),b)," incrementata di "),c)," è "),taglia));
-		stampa(concatCD(" ed è pari a ",risultato));
-		printf("vuoi continuare? (si/no):\t");
-	scanf("%s",ans);
+	strcpy(user_name,askName(enemy_name));
+	startDialogue(copy_string(enemy_name),copy_string(user_name));
+	while(!(enemy_lost)){
+		int damage;
+		damage = selectMove();
+		fight(copy_string(enemy_name),damage,&enemy_life);
 		
 	}
 
-	printf("%s\n","");
-	printf("%s","ciao");
+	printf("%s\n","battaglia conclusa");
 	 return 0;
 }
 

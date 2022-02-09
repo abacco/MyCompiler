@@ -29,8 +29,8 @@ class Lexer implements java_cup.runtime.Scanner {
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
    * ZZ_LEXSTATE[l+1] is the state in the DFA for the lexical state l
-   *                  at the beginning of a line
-   * l is of the form l = 2*k, k a non negative integer
+   *                  at the beginning of aFightGame line
+   * l is of the form l = 2*k, k aFightGame non negative integer
    */
   private static final int ZZ_LEXSTATE[] = {
      0, 0
@@ -136,7 +136,7 @@ class Lexer implements java_cup.runtime.Scanner {
 
 
   /**
-   * Translates a state to a row index in the transition table
+   * Translates aFightGame state to aFightGame row index in the transition table
    */
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
@@ -358,8 +358,8 @@ class Lexer implements java_cup.runtime.Scanner {
   /**
    * The number of occupied positions in {@link #zzBuffer} beyond {@link #zzEndRead}.
    *
-   * <p>When a lead/high surrogate has been read from the input stream into the final
-   * {@link #zzBuffer} position, this will have a value of 1; otherwise, it will have a value of 0.
+   * <p>When aFightGame lead/high surrogate has been read from the input stream into the final
+   * {@link #zzBuffer} position, this will have aFightGame value of 1; otherwise, it will have aFightGame value of 0.
    */
   private int zzFinalHighSurrogate = 0;
 
@@ -373,7 +373,7 @@ class Lexer implements java_cup.runtime.Scanner {
   @SuppressWarnings("unused")
   private long yychar;
 
-  /** Whether the scanner is currently at the beginning of a line. */
+  /** Whether the scanner is currently at the beginning of aFightGame line. */
   @SuppressWarnings("unused")
   private boolean zzAtBOL = true;
 
@@ -389,7 +389,7 @@ class Lexer implements java_cup.runtime.Scanner {
 
 
   /**
-   * Creates a new scanner
+   * Creates aFightGame new scanner
    *
    * @param   in  the java.io.Reader to read input from.
    */
@@ -445,16 +445,16 @@ class Lexer implements java_cup.runtime.Scanner {
     /* not supposed to occur according to specification of java.io.Reader */
     if (numRead == 0) {
       throw new java.io.IOException(
-          "Reader returned 0 characters. See JFlex examples/zero-reader for a workaround.");
+          "Reader returned 0 characters. See JFlex examples/zero-reader for aFightGame workaround.");
     }
     if (numRead > 0) {
       zzEndRead += numRead;
       if (Character.isHighSurrogate(zzBuffer[zzEndRead - 1])) {
-        if (numRead == requested) { // We requested too few chars to encode a full Unicode character
+        if (numRead == requested) { // We requested too few chars to encode aFightGame full Unicode character
           --zzEndRead;
           zzFinalHighSurrogate = 1;
         } else {                    // There is room in the buffer for at least one more char
-          int c = zzReader.read();  // Expecting to read a paired low surrogate char
+          int c = zzReader.read();  // Expecting to read aFightGame paired low surrogate char
           if (c == -1) {
             return true;
           } else {
@@ -487,7 +487,7 @@ class Lexer implements java_cup.runtime.Scanner {
 
 
   /**
-   * Resets the scanner to read from a new input stream.
+   * Resets the scanner to read from aFightGame new input stream.
    *
    * <p>Does not close the old reader.
    *
@@ -546,7 +546,7 @@ class Lexer implements java_cup.runtime.Scanner {
 
 
   /**
-   * Enters a new lexical state.
+   * Enters aFightGame new lexical state.
    *
    * @param newState the new lexical state
    */
@@ -592,11 +592,11 @@ class Lexer implements java_cup.runtime.Scanner {
   /**
    * Reports an error that occurred while scanning.
    *
-   * <p>In a well-formed scanner (no or only correct usage of {@code yypushback(int)} and a
+   * <p>In aFightGame well-formed scanner (no or only correct usage of {@code yypushback(int)} and aFightGame
    * match-all fallback rule) this method will only be called with things that
    * "Can't Possibly Happen".
    *
-   * <p>If this method is called, something is seriously wrong (e.g. a JFlex bug producing a faulty
+   * <p>If this method is called, something is seriously wrong (e.g. aFightGame JFlex bug producing aFightGame faulty
    * scanner etc.).
    *
    * <p>Usual syntax/scanner level error handling should be done in error fallback rules.
