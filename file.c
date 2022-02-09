@@ -6,7 +6,8 @@
 
 #define LENGTH  2048
 
-int counter=0;
+int c=1;
+
 char* concatCD(char *s1, double i) {
 char *s=malloc(sizeof(char) * LENGTH);
 sprintf(s, "%s%.2f", s1, i);
@@ -42,45 +43,72 @@ strcat(s, str1);
 
 return s;
 }
-void inserisci_valore(double value, double *somma)
+double sommac(int a, double b, char *size)
 {
-	*somma = *somma+value;
-	counter = counter+1;
-	
-}
-bool controlla_valore(double value)
-{
-	if(value==0.0){
-		return true;
+	double result;
+	result = a+b+c;
+	if(result>100){
+		char *valore=malloc(sizeof(char)*LENGTH);
+strcpy(valore,"grande");
+
+		strcpy(size,valore);
 		
 	}
 else{
-	return false;
+	char *valore=malloc(sizeof(char)*LENGTH);
+strcpy(valore,"piccola");
+
+		strcpy(size,valore);
 		
 	}
 
+	return result;
+	
+}
+void stampa(char *messaggio)
+{
+	int i=1;
+	while(i<=4){
+		int incremento=1;
+
+		printf("%s\n","");
+		i = i+incremento;
+		
+	}
+
+	printf("%s\n",messaggio);
 	
 }
 
 int main(void){
-	double somma=0;
-	double value=0;
-	bool continua=true;
-	printf("%s\n","Inserisci una sequenza di valori.Inserendo 0 termina l inserimento e viene riportata\n la media e il numero di valori inseriti");
-	while(continua){
-		printf("%s\t","inserisci un valore : ");
-		printf("");
-	scanf("%lf",&value);
-		continua = !(controlla_valore(value));
-		if(continua){
-		inserisci_valore(value,&somma);
+	int a=1;
+double b=2.2;
+
+	char *taglia=malloc(sizeof(char)*LENGTH);
+	char *ans=malloc(sizeof(char)*LENGTH);
+    strcpy(ans,"no");
+
+	double risultato=sommac(a,b,taglia);
+	stampa(concat(concat(concatCI(concat(concatCD(concat(concatCI("la somma di ",a)," e "),b)," incrementata di "),c)," è "),taglia));
+	stampa(concatCD("ed è pari a ",risultato));
+	printf("%s\t","vuoi continuare? (si/no)");
+	printf("");
+	scanf("%s",ans);
+	while((strcmp(ans,"si")==0)){
+		printf("inserisci un intero:");
+	scanf("%d",&a);
+		printf("inserisci un reale:");
+	scanf("%lf",&b);
+		risultato = sommac(a,b,taglia);
+		stampa(concat(concat(concatCI(concat(concatCD(concat(concatCI("la somma di ",a)," e "),b)," incrementata di "),c)," è "),taglia));
+		stampa(concatCD(" ed è pari a ",risultato));
+		printf("vuoi continuare? (si/no):\t");
+	scanf("%s",ans);
 		
 	}
 
-		
-	}
-
-	printf("%s\n",concatCD(concat(concatCI("Hai inserito  n° valori : ",counter)," la media è: "),somma/counter));
+	printf("%s\n","");
+	printf("%s","ciao");
 	 return 0;
 }
 

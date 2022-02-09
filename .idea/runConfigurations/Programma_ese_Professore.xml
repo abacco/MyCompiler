@@ -1,9 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="valid22" type="Application" factoryName="Application">
+  <configuration default="false" name="Programma_ese_Professore" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="Tester" />
     <module name="bacco-bacco-lamonica_es5_scg" />
-    <option name="PROGRAM_PARAMETERS" value="test_file\valid22" />
+    <option name="PROGRAM_PARAMETERS" value="test_file\programma_esempio" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
