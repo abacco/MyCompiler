@@ -1,28 +1,46 @@
-bool flag := true ;
+#*
+Questo programma calcola la media di una sequenza di valori reali dati in input dall utente.
+#
 
-fun divisione( real a, real b ) : real
-real result := a ;
-return result ;
+integer counter := 0 ; #* counter che memorizza quanti valori sono stati forniti in input#
+
+
+fun inserisci_valore(real value, out real somma )
+somma := somma + value;
+counter := counter + 1;
 end fun;
 
-fun stampa(string messaggio)
 
-	integer i := 1;
-	while true  loop
-		var incremento := 1;
-		i := incremento;
-	end loop;
-
+#* ritorna true se il valore inserito è 0, altrimenti false#
+fun controlla_valore(real value): bool
+if(value=0.0)
+then
+return true;
+else
+return false;
+end if;
 end fun;
+
+
 
 main
-real i , ok := 22.2;
-string m:='ciao' & 'miao';
-var m1 := 'ciao2', mercos:=2;
-integer f;
+real somma := 0;
+real value := 0;
+bool continua := true;
+?.'Inserisci una sequenza di valori.Inserendo 0 termina l inserimento e viene riportata\n la media e il numero di valori inseriti';
 
-if flag then
-% i, f 'ciao';
+while(continua) loop
+?: 'inserisci un valore : ';
+% value;
+
+continua := not controlla_valore(value);
+if (continua)
+then
+inserisci_valore(value, @somma);
 end if;
+
+end loop;
+
+?. 'Hai inserito  n° valori : ' & counter & ' la media è: ' & somma/counter;
 
 end main;

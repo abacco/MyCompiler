@@ -1,6 +1,6 @@
 fun print_menu(): integer
     integer choose;
-    ?. 'Scegli l operazione da svolgere per continuare';
+    ?. "Scegli l'operazione da svolgere per continuare";
     ?. '\t(1) Somma di due numeri';
     ?. '\t(2) Moltiplicazione di due numeri';
     ?. '\t(3) Divisione intera fra due numeri positivi';
@@ -43,26 +43,26 @@ fun do_pow()
     real op1, op2;
     ?. '\n(4) POTENZA';
     % op1 '\nInserisci la base: ';
-    % op2 'Inserisci l esponente: ';
+    % op2 "Inserisci l'esponente: ";
     ?. '';
     ?. 'La potenza di ' & op1 & ' elevato a ' & op2 & ' vale ' & op1 ^ op2;
 end fun;
 
 fun recursive_fib(integer n): integer
-    if n = 0 then
+    if n = 1 then
         return 0;
     end if;
-    if n = 1 then
+    if n = 2 then
         return 1;
     end if;
     return recursive_fib(n - 1) + recursive_fib(n - 2);
 end fun;
 
 fun iterative_fib(integer n): integer
-    if n = 0 then
+    if n = 1 then
         return 0;
     end if;
-    if n = 1 then
+    if n = 2 then
         return 1;
     end if;
     if n > 2 then
@@ -103,26 +103,26 @@ fun do_operation(integer choose)
     end if;end if;end if;end if;end if;end if;
 end fun;
 
-fun print_continue(out bool continues)
+fun print_continue(out bool continue)
     string in;
     % in 'Vuoi continuare? (s/n) --> ';
     if in = 's' then
-        continues := true;
+        continue := true;
     else
-        continues := false;
+        continue := false;
     end if;
 end fun;
 
 main
-    var choose := 0, continues := true;
+    var choose := 0, continue := true;
 
-    while continues loop
+    while continue loop
         choose := print_menu();
         if choose = 0 then
-            continues := false;
+            continue := false;
         else
             do_operation(choose);
-            print_continue(@continues);
+            print_continue(@continue);
         end if;
     end loop;
 end main;

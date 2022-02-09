@@ -86,7 +86,10 @@ public class TypeCheckingVisitor implements Visitor {
             if(IdListInit.getList().get(key)!=null)
             {
                 ReturnType constant = (ReturnType) IdListInit.getList().get(key).accept(this);
-                if(varType!=constant) throw new Exception("Non è possibile assegnare alla variabile " + key + " di tipo " + varType + " il valore di un espressione di tipo " + constant);
+                int row = CompatibilityType.getIndexFor(varType);
+                int col = CompatibilityType.getIndexFor(constant);
+                ReturnType nodeType = CompatibilityType.ASSIGNOP[row][col];
+                if(nodeType == ReturnType.UNDEFINED)  throw new Exception("Non è possibile assegnare alla variabile " + key + " di tipo " + varType + " il valore di un espressione di tipo " + constant);
             }
         }
 
@@ -103,7 +106,10 @@ public class TypeCheckingVisitor implements Visitor {
             if(IdListInitObbl.getList().get(key)!=null)
             {
                 ReturnType constant = (ReturnType) IdListInitObbl.getList().get(key).accept(this);
-                if(varType!=constant) throw new Exception("Non è possibile assegnare alla variabile " + key + " di tipo " + varType + " un espressione di tipo " + constant);
+                int row = CompatibilityType.getIndexFor(varType);
+                int col = CompatibilityType.getIndexFor(constant);
+                ReturnType nodeType = CompatibilityType.ASSIGNOP[row][col];
+                if(nodeType == ReturnType.UNDEFINED)  throw new Exception("Non è possibile assegnare alla variabile " + key + " di tipo " + varType + " il valore di un espressione di tipo " + constant);
             }
         }
 

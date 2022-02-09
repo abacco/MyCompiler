@@ -19,37 +19,54 @@ import java.util.Collections;
 
 public class CodeVisitor implements Visitor{
     private static final String C_HEADER =
-            "#include <stdio.h>\n" + "#include <stdbool.h>\n#include <string.h>\n#include<stdlib.h>\n";
+            "#include <stdio.h>\n" + "#include <stdbool.h>\n#include <string.h>\n#include<stdlib.h>\n#include <math.h>\n";
 
 
-    private static final String DECL_HEADER =  "#define LENGTH  2048\n" + "char str1[LENGTH], str2[LENGTH];\n";
+    private static final String DECL_HEADER =  "#define LENGTH  2048\n" ;
     private static final String DEFAULT_FUNCTION =
             "char* concatCD(char *s1, double i) {\n" +
-                    "char s[LENGTH];\n" +
+                    "char *s=malloc(sizeof(char) * LENGTH);\n" +
                     "sprintf(s, \"%s%.2f\", s1, i);\n" +
                     "return s;\n" +
                     "}" +
-                    "" +
+                    "\n" +
                     "char* concatDC(double i, char *s1) {\n" +
-                    "char s[LENGTH];\n" +
+                    "char *s=malloc(sizeof(char) * LENGTH);\n" +
                     "sprintf(s, \"%.2f%s\", i, s1);\n" +
                     "return s;\n" +
                     "}" +
-                    "" +
+                    "\n" +
                     "char* concatCI(char *s1, int i) {\n" +
-                    "char s[LENGTH];\n" +
+                    "char *s=malloc(sizeof(char) * LENGTH);\n" +
                     "sprintf(s, \"%s%d\", s1, i);\n" +
                     "return s;\n" +
                     "}" +
-                    "" +
+                    "\n" +
                     "char* concatIC(int i, char *s1) {\n" +
-                    "char s[LENGTH];\n" +
+                    "char *s=malloc(sizeof(char) * LENGTH);\n" +
                     "sprintf(s, \"%d%s\", i, s1);\n" +
+                    "return s;\n" +
+                    "}" +
+                    "\n" +
+                    "char* concat(char *str1, char *str2)\n" +
+                    "{\n" +
+                    "char *s=malloc(sizeof(char) * LENGTH);\n" +
+                    "strcat(s, str1);\n" +
+                    "strcat(s, str2);\n" +
+                    "\n" +
+                    "return s;\n" +
+                    "}" +
+                    "\n" +
+                    "char* copy_string(char *str1)\n" +
+                    "{\n" +
+                    "char *s=malloc(sizeof(char) * LENGTH);\n" +
+                    "strcat(s, str1);\n" +
+                    "\n" +
                     "return s;\n" +
                     "}";
 
     private TreeSymbolTable symbolTable;
-    private StringBuilder mallocString = new StringBuilder();
+    private StringBuilder mallocString;
 
     // use the mallocString for create into main the malloc for global variable (string)
     public CodeVisitor(TreeSymbolTable table) {
@@ -170,14 +187,18 @@ public class CodeVisitor implements Visitor{
     }
 
     @Override
-    public Object visit(String_Const Const) {
-        return String.valueOf(Const.getStringConst()).replace("\'", "\"") ;
+    public Object visit(String_Const Const)
+    {
+
+        return "\"" + String.valueOf(Const.getStringConst()).substring(1,Const.getStringConst().length()-1) + "\"" ;
     }
 
     @Override
     public Object visit(IdListInitOp IdListInit) throws Exception
     {
         StringBuilder listInit = new StringBuilder();
+        mallocString = new StringBuilder();
+
         int i=1;
         String expression = "";
 
@@ -186,22 +207,31 @@ public class CodeVisitor implements Visitor{
             String id = key;
             ReturnType varType = symbolTable.lookup(IdListInit.getAttachScope(), key).getReturnType();
 
-            if(varType==ReturnType.STRING) id =  key + "[LENGTH]";
 
-            if (IdListInit.getList().get(key) != null) {
-                expression = (String) IdListInit.getList().get(key).accept(this);
-                listInit.append(" ").append(id).append("=").append(expression);
-            } else {
-                listInit.append(" ").append(id);
+            if(varType==ReturnType.STRING) id =  "*" + key + "=malloc(sizeof(char)*LENGTH)";
+            if(varType!=ReturnType.STRING) {
+                if (IdListInit.getList().get(key) != null) {
+                    expression = (String) IdListInit.getList().get(key).accept(this);
+                    listInit.append(" ").append(id).append("=").append(expression);
+                } else {
+                    listInit.append(" ").append(id);
+                }
             }
+            else
+            {
+                listInit.append(" ").append(id);
+                if (IdListInit.getList().get(key) != null) {
 
+                    mallocString.append("strcpy(").append(key).append(",").append(expression + ");\n");
+                }
+            }
             if (i != IdListInit.getList().size()) listInit.append(",").append(" ");
 
             i++;
 
         }
         listInit.append(";");
-        return listInit.toString();
+        return listInit.append(mallocString).toString();
     }
 
     @Override
@@ -210,25 +240,31 @@ public class CodeVisitor implements Visitor{
         StringBuilder listInit = new StringBuilder();
         int i=1;
         String expression = "";
+        mallocString = new StringBuilder();
 
         for (String key: IdListInitObbl.getList().keySet())
         {
 
             String id = key;
             String type =convertReturnType_ToTypeC(symbolTable.lookup(IdListInitObbl.getAttachScope(), key).getReturnType());
-            if(type.equals("char")) id =  key + "[LENGTH]";
-
             expression = (String) IdListInitObbl.getList().get(key).accept(this);
+            if(type.equals("char")) {
+                id = "*" + key + "=malloc(sizeof(char)*LENGTH)";
+                listInit.append(type).append(" ").append(id);
+                mallocString.append("strcpy(").append(key).append(",").append(expression + ");\n");
+            }
+            else
+            {
             listInit.append(type).append(" ").append(id).append("=").append(expression);
-
-            if (i != IdListInitObbl.getList().size()) listInit.append(";").append("\n");
+            }
+            listInit.append(";").append("\n");
 
             i++;
 
         }
 
-        listInit.append(";");
-        return listInit.toString();
+
+        return listInit.append(mallocString).toString();
 
     }
 
@@ -410,11 +446,12 @@ public class CodeVisitor implements Visitor{
             listFormat += getFormatReturnType(id.getNodeType());
 
             if(id.getNodeType()==ReturnType.STRING)idList +=  (String) id.accept(this) ;
-            else idList += "&" + (String) id.accept(this) ;
+            else idList += "&" + ((String) id.accept(this)) ;
 
             if(ReadStat.getListId().size() != i) idList += ",";
             i++;
         }
+        idList.replace("*","");
         builder.append("printf(").append(expr).append(");").append("\n\t");
         return builder.append("scanf(").append( "\"" + listFormat + "\"").append(",").append(idList).append(");").toString();
     }
@@ -474,7 +511,8 @@ public class CodeVisitor implements Visitor{
 
             if(e instanceof ID)
             {
-                if(((ID) e).getNodeType() == ReturnType.STRING)  callBuilder.append(listExpression);
+                if(((ID) e).getNodeType() == ReturnType.STRING && !((ID) e).isOutPar())  callBuilder.append("copy_string(" + listExpression + ")");
+                else if(((ID) e).getNodeType() == ReturnType.STRING)  callBuilder.append(listExpression);
                 else if(((ID) e).isOutPar()) callBuilder.append("&").append(listExpression);
                 else callBuilder.append(listExpression);
             }
@@ -490,7 +528,12 @@ public class CodeVisitor implements Visitor{
     @Override
     public Object visit(ID id) throws Exception
     {
-
+        IKind kind = symbolTable.lookup(id.getAttachScope(), id.getName());
+        if(kind instanceof VarKind)
+        {
+            if(((VarKind) kind).getPartype()== ParType.OUT && id.getNodeType()!= ReturnType.STRING)
+                return "*"+id.getName();
+        }
         return id.getName();
     }
 
@@ -556,7 +599,7 @@ public class CodeVisitor implements Visitor{
         {
             if(typeExp1== ReturnType.STRING && typeExp2== ReturnType.STRING)
             {
-                builder.append("strcat(" + exp1 +"," + exp2 + ")");
+                builder.append("concat(" + exp1 +"," + exp2 + ")");
             }
             if(typeExp1== ReturnType.STRING && typeExp2== ReturnType.INT)
             {

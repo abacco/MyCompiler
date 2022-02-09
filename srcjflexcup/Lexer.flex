@@ -49,7 +49,7 @@ Comment_SingleLine = "#" {InputCharacter}* {LineTerminator}?
 Comment_MultiLine = "#*" ([^#]|{LineTerminator})* "#"
 
 /* STRING */
-String = \' [^\']* \'
+String = \' [^\']* \' | \" [^\"]* \"
 
 
 %%
@@ -130,6 +130,8 @@ String = \' [^\']* \'
 
 
 }
+
+
 
 [^]     {return symbol(sym.ERROR);} // no token found? error
 <<EOF>> {return symbol(sym.EOF);}
