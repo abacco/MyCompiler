@@ -100,8 +100,6 @@ public class XMLGenerator  implements Visitor{
             Element id = document.createElement("ID");
             id.setAttribute("name", key);
             idListElement.appendChild(id);
-
-
         }
 
         return idListElement;

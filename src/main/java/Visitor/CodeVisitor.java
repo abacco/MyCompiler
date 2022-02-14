@@ -208,7 +208,17 @@ public class CodeVisitor implements Visitor{
             ReturnType varType = symbolTable.lookup(IdListInit.getAttachScope(), key).getReturnType();
 
 
-            if(varType==ReturnType.STRING) id =  "*" + key + "=malloc(sizeof(char)*LENGTH)";
+            if(varType==ReturnType.STRING)
+            {
+                if(symbolTable.isGlobal(IdListInit.getAttachScope()))
+                {
+                    id =  key + "[LENGTH]";
+                }
+                else
+                {
+                    id = "*" + key + "=malloc(sizeof(char)*LENGTH)";
+                }
+            }
             if(varType!=ReturnType.STRING) {
                 if (IdListInit.getList().get(key) != null) {
                     expression = (String) IdListInit.getList().get(key).accept(this);
@@ -221,8 +231,14 @@ public class CodeVisitor implements Visitor{
             {
                 listInit.append(" ").append(id);
                 if (IdListInit.getList().get(key) != null) {
-
+                    if(symbolTable.isGlobal(IdListInit.getAttachScope()))
+                    {
+                        listInit.append("=").append(expression);
+                    }
+                    else
+                    {
                     mallocString.append("strcpy(").append(key).append(",").append(expression + ");\n");
+                    }
                 }
             }
             if (i != IdListInit.getList().size()) listInit.append(",").append(" ");
@@ -249,9 +265,17 @@ public class CodeVisitor implements Visitor{
             String type =convertReturnType_ToTypeC(symbolTable.lookup(IdListInitObbl.getAttachScope(), key).getReturnType());
             expression = (String) IdListInitObbl.getList().get(key).accept(this);
             if(type.equals("char")) {
-                id = "*" + key + "=malloc(sizeof(char)*LENGTH)";
-                listInit.append(type).append(" ").append(id);
-                mallocString.append("strcpy(").append(key).append(",").append(expression + ");\n");
+                if(symbolTable.isGlobal(IdListInitObbl.getAttachScope()))
+                {
+                    id =  key + "[LENGTH]";
+                    listInit.append(type).append(" ").append(id).append("=").append(expression);
+                }
+                else
+                {
+                    id = "*" + key + "=malloc(sizeof(char)*LENGTH)";
+                    listInit.append(type).append(" ").append(id);
+                    mallocString.append("strcpy(").append(key).append(",").append(expression + ");\n");
+                }
             }
             else
             {

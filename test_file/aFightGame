@@ -14,6 +14,7 @@
 
 bool enemy_lost := false;
 
+
 fun askName(out string enemy_name): string
     string user_name;
     % user_name 'Dimmi il tuo nome ' ;

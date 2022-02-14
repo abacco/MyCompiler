@@ -58,6 +58,14 @@ public class TreeSymbolTable implements ISymbolTable {
     }
 
     @Override
+    public boolean isGlobal(Scope scope) {
+        if(scope==root) return true;
+        else return false;
+    }
+
+
+
+    @Override
     public IKind lookup(String id) {
         Scope lastScope = this.getCurrentScope();
         while (lastScope != null) {

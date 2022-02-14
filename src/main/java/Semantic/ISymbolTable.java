@@ -17,6 +17,8 @@ public interface ISymbolTable {
     /* add address element to current scope*/
     void add(String id, IKind kind);
 
+    boolean isGlobal(Scope scope);
+
     /* finds current scope*/
     IKind lookup(String id);
 

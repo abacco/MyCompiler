@@ -6,7 +6,8 @@
 
 #define LENGTH  2048
 
-bool enemy_lost=false;
+char miao[LENGTH]="string";
+char uu[LENGTH],  ciao[LENGTH],  o[LENGTH];bool enemy_lost=false;
 char* concatCD(char *s1, double i) {
 char *s=malloc(sizeof(char) * LENGTH);
 sprintf(s, "%s%.2f", s1, i);
