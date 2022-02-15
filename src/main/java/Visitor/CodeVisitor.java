@@ -229,8 +229,10 @@ public class CodeVisitor implements Visitor{
             }
             else
             {
+
                 listInit.append(" ").append(id);
                 if (IdListInit.getList().get(key) != null) {
+                    expression = (String) IdListInit.getList().get(key).accept(this);
                     if(symbolTable.isGlobal(IdListInit.getAttachScope()))
                     {
                         listInit.append("=").append(expression);
