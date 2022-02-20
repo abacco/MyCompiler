@@ -651,7 +651,7 @@ public class CodeVisitor implements Visitor{
         }
         else if(operationType== BinaryOperation.BinaryOperationType.DivIntOp )
         {
-            builder.append(exp1).append("%").append(exp2);
+            builder.append("((int)").append(exp1).append("/").append(exp2).append(")");
         }
         else if(operationType== BinaryOperation.BinaryOperationType.PowOp)
         {
