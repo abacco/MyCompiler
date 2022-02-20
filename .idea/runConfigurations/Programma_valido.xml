@@ -1,8 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Programma_valido" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="Tester" />
-    <module name="bacco-bacco-lamonica_es5_scg" />
+    <module name="bacco-bacco-lamonica_es4_mfp" />
     <option name="PROGRAM_PARAMETERS" value="test_file\Programma_valido.txt" />
     <method v="2">
       <option name="Make" enabled="true" />
