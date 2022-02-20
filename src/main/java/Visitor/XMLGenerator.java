@@ -230,6 +230,11 @@ public class XMLGenerator  implements Visitor{
             Element e = (Element) el.accept(this);
             ifElement.appendChild(e);
         }
+        if(!ifStat.getElseStatOp().isEmpty())
+        {
+            Element elseElem = (Element) ifStat.getElseStatOp().accept(this);
+            ifElement.appendChild(elseElem);
+        }
         return ifElement;
     }
 

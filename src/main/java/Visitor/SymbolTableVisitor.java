@@ -13,6 +13,7 @@ import Node.Expression.UnaryOperation;
 import Node.Statement.*;
 import Semantic.*;
 import Semantic.Enum.Kind;
+import Semantic.IKind;
 import Semantic.Enum.ParType;
 import Semantic.Enum.ReturnType;
 import org.w3c.dom.Element;
