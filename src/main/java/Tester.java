@@ -22,23 +22,12 @@ public class Tester
     public static void main(String[] args) throws Exception {
 
         FileReader inFile = new FileReader(args[0]);
-        Lexer lexer = new Lexer(inFile);
-        parser p = new parser(lexer);
-        /*
-        Symbol token;
-        while ((token = lexer.next_token())!= null) {
-            if (token.sym == sym.EOF) {
-                break;
-            }
+        Lexer lexer = new Lexer(inFile);            //Lexer
+        parser p = new parser(lexer);               //Parser
 
-            System.out.println(sym.terminalNames[token.sym] + " " + token.sym);
-        }
-        */
+        ProgramOp prog =  (ProgramOp) p.parse().value;  //Create Syntaxt Tree
 
-
-
-        ProgramOp prog =  (ProgramOp) p.debug_parse().value;
-
+        /* Print xml syntaxt tree */
         XMLGenerator xml = new XMLGenerator();
         Document doc = (Document) prog.accept(xml);
 
@@ -48,14 +37,20 @@ public class Tester
         StreamResult streamResult = new StreamResult(new File(System.getProperty("user.dir")+"\\albero_sintattico.xml"));
         transformer.transform(domSource, streamResult);
 
+        /* Semantic area */
+
+        /* Generate Symbol table */
+
         SymbolTableVisitor visitor = new SymbolTableVisitor();
         TreeSymbolTable symbolTable = (TreeSymbolTable) prog.accept(visitor);
 
-        symbolTable.stampTree();
+        symbolTable.stampTree(); //stamp symbol table
 
+        /* Type Checking */
         TypeCheckingVisitor semanticVisitor = new TypeCheckingVisitor(symbolTable);
         ReturnType returnType = (ReturnType) prog.accept(semanticVisitor);
 
+        /* Generate intermediate code */
         CodeVisitor codeVisitor = new CodeVisitor(symbolTable);
         
         File generatedFile = new File(System.getProperty("user.dir")+"\\file.c");
