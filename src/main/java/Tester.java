@@ -56,7 +56,7 @@ public class Tester
         SymbolTableVisitor visitor = new SymbolTableVisitor();
         TreeSymbolTable symbolTable = (TreeSymbolTable) prog.accept(visitor);
 
-        symbolTable.stampTree(); //stamp symbol table
+        // symbolTable.stampTree(); //stamp symbol table
 
         /* Type Checking */
         TypeCheckingVisitor semanticVisitor = new TypeCheckingVisitor(symbolTable);
