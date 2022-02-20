@@ -9,6 +9,10 @@ import Visitor.XMLGenerator;
 import org.w3c.dom.Document;
 
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -37,13 +41,13 @@ public class Tester
 
         XMLGenerator xml = new XMLGenerator();
         Document doc = (Document) prog.accept(xml);
-        /*
+
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
-        DOMSource domSource = new DOMSource((Node) doc);
+        DOMSource domSource = new DOMSource(doc);
         StreamResult streamResult = new StreamResult(new File(System.getProperty("user.dir")+"\\albero_sintattico.xml"));
         transformer.transform(domSource, streamResult);
-        */
+
         SymbolTableVisitor visitor = new SymbolTableVisitor();
         TreeSymbolTable symbolTable = (TreeSymbolTable) prog.accept(visitor);
 
