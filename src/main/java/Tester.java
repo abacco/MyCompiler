@@ -22,6 +22,17 @@ public class Tester
     public static void main(String[] args) throws Exception {
 
         FileReader inFile = new FileReader(args[0]);
+        /* GET FILE NAME */
+        int indexSeparator = args[0].toString().lastIndexOf("\\");
+        if(indexSeparator==-1)indexSeparator = args[0].toString().lastIndexOf("/");
+
+        String fileName = args[0].toString().substring(indexSeparator + 1);
+        int indexDot = fileName.toString().lastIndexOf(".");
+        if(indexDot != -1) {
+            fileName = fileName.toString().substring(0, indexDot);
+        }
+
+                                                                                /* Lexical and Syntaxt area */
         Lexer lexer = new Lexer(inFile);            //Lexer
         parser p = new parser(lexer);               //Parser
 
@@ -37,7 +48,8 @@ public class Tester
         StreamResult streamResult = new StreamResult(new File(System.getProperty("user.dir")+"\\albero_sintattico.xml"));
         transformer.transform(domSource, streamResult);
 
-        /* Semantic area */
+
+                                                                                /* Semantic area */
 
         /* Generate Symbol table */
 
@@ -50,10 +62,15 @@ public class Tester
         TypeCheckingVisitor semanticVisitor = new TypeCheckingVisitor(symbolTable);
         ReturnType returnType = (ReturnType) prog.accept(semanticVisitor);
 
-        /* Generate intermediate code */
+
+                                                                        /* Generate intermediate code in directory test_files\c_out */
+
         CodeVisitor codeVisitor = new CodeVisitor(symbolTable);
-        
-        File generatedFile = new File(System.getProperty("user.dir")+"\\file.c");
+        File directory = new File(System.getProperty("user.dir")+File.separator+"test_files"+File.separator+"c_out");
+        if(!directory.exists()) directory.mkdir();
+
+        File generatedFile = new File(System.getProperty("user.dir")+File.separator+"test_files"+File.separator+"c_out"+ File.separator + fileName + ".c");
+
         FileWriter pw = new FileWriter(generatedFile);
 
         pw.write((String) codeVisitor.visit(prog));
