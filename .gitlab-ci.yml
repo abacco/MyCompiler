@@ -57,7 +57,6 @@ deploy:jdk17:
   script:
     - 'mvn $MAVEN_CLI_OPTS clean'
     - 'mvn $MAVEN_CLI_OPTS compile'
-    - 'git update-index --chmod=+x runtests.sh'
     - './runtests.sh'
   only:
     variables:
