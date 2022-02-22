@@ -32,7 +32,7 @@ import java.util.HashMap;
 
 whitespace = {LineTerminator} | [ \t]
 LineTerminator = \r|\n|\r\n
-EscapeCharacter = \\u|\\n|\\r|\\t|\\b|\\f|\\\"|\\'
+EscapeCharacter = \\n|\\r|\\t|\\b|\\f|\\\"|\\'
 InputCharacter = [^\r\n]
 
 ID = [$_A-Za-z][$_A-Za-z0-9]*

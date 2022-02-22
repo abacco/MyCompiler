@@ -1,0 +1,15 @@
+var s := "aaaaaaaa8888888...\t\u\n\b";
+var s1 := "aaa''''''''\"\n";
+var s2 := "nnkaj\b\t\ulshd\n\n\t\t\t\t";
+
+var s3 := "'''1n\t\u\b\b\b\n\n\n\n\n";
+
+var a :=1,b := 2,c:= 2,d:= 2,e:= 2,f := 666;
+
+main
+
+string s4 := "\"\"\"\"\"\"\b\b\n\t\u\b\n\"\n";
+
+integer a :=1 ,b,c,d,e,f;
+
+end main;
