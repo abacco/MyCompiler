@@ -6,10 +6,7 @@ import Node.Constant.Integer_Const;
 import Node.Constant.Real_Const;
 import Node.Constant.String_Const;
 import Node.Declaration.*;
-import Node.Expression.BinaryOperation;
-import Node.Expression.CallFunOp;
-import Node.Expression.Expression;
-import Node.Expression.UnaryOperation;
+import Node.Expression.*;
 import Node.Statement.*;
 import Semantic.*;
 import Semantic.Enum.Kind;
@@ -347,5 +344,12 @@ public class SymbolTableVisitor implements Visitor{
 
         return null;
 
+    }
+
+    @Override
+    public Object visit(ExpressionPar expressionPar) throws Exception {
+        expressionPar.getExpression().accept(this);
+        expressionPar.attachScope(symbolTable.getCurrentScope());
+        return null;
     }
 }

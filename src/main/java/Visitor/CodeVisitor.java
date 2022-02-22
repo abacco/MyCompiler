@@ -6,10 +6,7 @@ import Node.Constant.Integer_Const;
 import Node.Constant.Real_Const;
 import Node.Constant.String_Const;
 import Node.Declaration.*;
-import Node.Expression.BinaryOperation;
-import Node.Expression.CallFunOp;
-import Node.Expression.Expression;
-import Node.Expression.UnaryOperation;
+import Node.Expression.*;
 import Node.Statement.*;
 import Semantic.*;
 import Semantic.Enum.ParType;
@@ -683,6 +680,13 @@ public class CodeVisitor implements Visitor{
         String expression = (String) returnExpOp.getExpression().accept(this);
 
         return builder.append("return ").append(expression).append(";").toString();
+    }
+
+    @Override
+    public Object visit(ExpressionPar expressionPar) throws Exception {
+        StringBuilder builder = new StringBuilder();
+        String expression = (String) expressionPar.getExpression().accept(this);
+        return builder.append("( ").append(expression).append(")").toString();
     }
 
     public static String convertReturnType_ToTypeC(ReturnType returnType)

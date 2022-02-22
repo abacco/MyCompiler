@@ -2,10 +2,7 @@ package Visitor;
 
 import Node.Constant.*;
 import Node.Declaration.*;
-import Node.Expression.BinaryOperation;
-import Node.Expression.CallFunOp;
-import Node.Expression.Expression;
-import Node.Expression.UnaryOperation;
+import Node.Expression.*;
 import Node.FunOp;
 import Node.ID;
 import Node.MainOp;
@@ -343,6 +340,14 @@ public class XMLGenerator  implements Visitor{
     public Object visit(ReturnExpOp returnExpOp) throws Exception {
         Element returnElement = document.createElement("ReturnExpOp");
         Element expression = (Element) returnExpOp.getExpression().accept(this);
+        returnElement.appendChild(expression);
+        return returnElement;
+    }
+
+    @Override
+    public Object visit(ExpressionPar expressionPar) throws Exception {
+        Element returnElement = document.createElement("ExpParOp");
+        Element expression = (Element) expressionPar.getExpression().accept(this);
         returnElement.appendChild(expression);
         return returnElement;
     }

@@ -2,10 +2,7 @@ package Visitor;
 
 import Node.Constant.*;
 import Node.Declaration.*;
-import Node.Expression.BinaryOperation;
-import Node.Expression.CallFunOp;
-import Node.Expression.Expression;
-import Node.Expression.UnaryOperation;
+import Node.Expression.*;
 import Node.FunOp;
 import Node.ID;
 import Node.MainOp;
@@ -63,4 +60,6 @@ public interface Visitor {
     Object visit(UnaryOperation unaryOperation) throws Exception;
 
     Object visit(ReturnExpOp returnExpOp) throws Exception;
+
+    Object visit(ExpressionPar expressionPar) throws Exception;
 }

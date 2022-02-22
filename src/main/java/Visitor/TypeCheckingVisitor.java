@@ -5,10 +5,7 @@ import Node.Constant.Integer_Const;
 import Node.Constant.Real_Const;
 import Node.Constant.String_Const;
 import Node.Declaration.*;
-import Node.Expression.BinaryOperation;
-import Node.Expression.CallFunOp;
-import Node.Expression.Expression;
-import Node.Expression.UnaryOperation;
+import Node.Expression.*;
 import Node.*;
 import Node.Statement.*;
 import Semantic.*;
@@ -436,5 +433,13 @@ public class TypeCheckingVisitor implements Visitor {
 
         returnExpOp.setNodeType(ReturnType.NO_TYPE);
         return ReturnType.NO_TYPE;
+    }
+
+    @Override
+    public Object visit(ExpressionPar expressionPar) throws Exception {
+        ReturnType typeE= (ReturnType) expressionPar.getExpression().accept(this);
+
+        expressionPar.setNodeType(typeE);
+        return typeE;
     }
 }
