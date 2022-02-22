@@ -1,7 +1,7 @@
 fun print_menu(): integer
     integer choose;
-    ?. 'Scegli l operazione da svolgere per continuare';
-    ?. '\t(1) Somma di due numeri';
+    ?. "\n\rScegli l'operazione da svolgere per continuare";
+    ?. '\t(1) Somma di due numeri\r';
     ?. '\t(2) Moltiplicazione di due numeri';
     ?. '\t(3) Divisione intera fra due numeri positivi';
     ?. '\t(4) Elevamento a potenza';

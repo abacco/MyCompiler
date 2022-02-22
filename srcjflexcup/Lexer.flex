@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 %{
     StringBuffer string = new StringBuffer();
-    int riga,colonna;
+
     private Symbol symbol(int type) {   return new Symbol(type, yyline, yycolumn);  }
     private Symbol symbol(int type, Object value) {     return new Symbol(type, yyline, yycolumn, value);   }
 
@@ -32,6 +32,7 @@ import java.util.HashMap;
 
 whitespace = {LineTerminator} | [ \t]
 LineTerminator = \r|\n|\r\n
+EscapeCharacter = \\u|\\n|\\r|\\t|\\b|\\f|\\\"|\\'
 InputCharacter = [^\r\n]
 
 ID = [$_A-Za-z][$_A-Za-z0-9]*
@@ -49,8 +50,10 @@ Comment_SingleLine = "#" {InputCharacter}* {LineTerminator}?
 Comment_MultiLine = "#*" ([^#]|{LineTerminator})* "#"
 
 /* STRING */
-String = \' [^\']* \' | \" [^\"]* \"
+// String = \' [^\']* \' | \" [^\"]* \"
 
+
+%state STRING1, STRING2
 
 %%
 										// Now for the actual tokens and assocated actions
@@ -71,7 +74,7 @@ String = \' [^\']* \' | \" [^\"]* \"
     "and"           {return symbol(sym.AND); }
     "or"            {return symbol(sym.OR); }
     "not"           {return symbol(sym.NOT); }
-    "loop"           {return symbol(sym.LOOP); }
+    "loop"          {return symbol(sym.LOOP); }
     "null"          {return symbol(sym.NULL); }
     "true"          {return symbol(sym.TRUE); }
     "false"         {return symbol(sym.FALSE); }
@@ -126,12 +129,32 @@ String = \' [^\']* \' | \" [^\"]* \"
     {Real}           { return symbol(sym.REAL_CONST,Double.valueOf(yytext())); }
 
     /* STRING */
-    {String}           { return symbol(sym.STRING_CONST,yytext()); }
-
+    // {String}           { return symbol(sym.STRING_CONST,yytext()); }
+    \"               { string.setLength(0); yybegin(STRING1); }
+    \'               { string.setLength(0); yybegin(STRING2); }
 
 }
 
+//Case String start with " character
+<STRING1> {
+\"               { yybegin(YYINITIAL); return symbol(sym.STRING_CONST,  string.toString()  ); }
+[^\n\r\"\'\\]+   {string.append(yytext()); }
+\'               {string.append("\\'"); }
+\\               {string.append("\\\\"); }
+{EscapeCharacter}  { string.append(yytext()); }
+{LineTerminator} { throw new Error("Unterminated string at end of line"); }
+}
+
+//Case String start with ' character
+<STRING2> {
+\'               { yybegin(YYINITIAL); return symbol(sym.STRING_CONST, string.toString()); }
+[^\n\r\'\"\\]+   {string.append(yytext()); }
+\"               {string.append("\\\""); }
+\\               {string.append("\\\\"); }
+{EscapeCharacter}  { string.append(yytext()); }
+{LineTerminator} { throw new Error("Unterminated string at end of line"); }
+}
 
 
-[^]     {return symbol(sym.ERROR);} // no token found? error
-<<EOF>> {return symbol(sym.EOF);}
+[^]      { throw new Error("Illegal character <"+yytext()+">"); }
+<<EOF>>  {return symbol(sym.EOF);}

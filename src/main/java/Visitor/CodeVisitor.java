@@ -26,13 +26,13 @@ public class CodeVisitor implements Visitor{
     private static final String DEFAULT_FUNCTION =
             "char* concatCD(char *s1, double i) {\n" +
                     "char *s=malloc(sizeof(char) * LENGTH);\n" +
-                    "sprintf(s, \"%s%.2f\", s1, i);\n" +
+                    "sprintf(s, \"%s%lf\", s1, i);\n" +
                     "return s;\n" +
                     "}" +
                     "\n" +
                     "char* concatDC(double i, char *s1) {\n" +
                     "char *s=malloc(sizeof(char) * LENGTH);\n" +
-                    "sprintf(s, \"%.2f%s\", i, s1);\n" +
+                    "sprintf(s, \"%lf%s\", i, s1);\n" +
                     "return s;\n" +
                     "}" +
                     "\n" +
@@ -82,7 +82,7 @@ public class CodeVisitor implements Visitor{
         String functions = "" ;
         String main = "";
         StringBuilder programBuilder = new StringBuilder();
-
+        Collections.reverse(Program.getListVarDecl());
         for (VarDeclOp var: Program.getListVarDecl()) {
             declarations += (String) var.accept(this);
         }
@@ -190,7 +190,8 @@ public class CodeVisitor implements Visitor{
     public Object visit(String_Const Const)
     {
 
-        return "\"" + String.valueOf(Const.getStringConst()).substring(1,Const.getStringConst().length()-1) + "\"" ;
+      
+        return  "\"" + Const.getStringConst() + "\"";
     }
 
     @Override
@@ -482,7 +483,7 @@ public class CodeVisitor implements Visitor{
             i++;
         }
         idList.replace("*","");
-        builder.append("printf(").append(expr).append(");").append("\n\t");
+        if(!expr.equals("\"\"")) builder.append("printf(").append(expr).append(");").append("\n\t");
         return builder.append("scanf(").append( "\"" + listFormat + "\"").append(",").append(idList).append(");").toString();
     }
 

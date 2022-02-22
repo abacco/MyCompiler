@@ -27,7 +27,7 @@ main
 real somma := 0;
 real value := 0;
 bool continua := true;
-?.'Inserisci una sequenza di valori.Inserendo 0 termina l inserimento e viene riportata\n la media e il numero di valori inseriti';
+?.'Inserisci una sequenza di valori.\t Inserendo 0 termina l\'inserimento e viene riportata\n la media e il numero di valori inseriti';
 
 while(continua) loop
 ?: 'inserisci un valore : ';
