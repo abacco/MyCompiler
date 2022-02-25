@@ -609,11 +609,16 @@ public class CodeVisitor implements Visitor{
         {
             builder.append(exp1).append(">").append(exp2);
         }
-        else if(operationType == BinaryOperation.BinaryOperationType.EQOp)
+        else if(operationType == BinaryOperation.BinaryOperationType.EQOp )
         {
             if(typeExp1==ReturnType.STRING && typeExp2==ReturnType.STRING )
             builder.append("(strcmp(").append(exp1).append(",").append(exp2).append(")==0)");
             else builder.append(exp1).append("==").append(exp2);
+        }
+        else if(operationType == BinaryOperation.BinaryOperationType.NEOp){
+            if(typeExp1==ReturnType.STRING && typeExp2==ReturnType.STRING )
+                builder.append("(strcmp(").append(exp1).append(",").append(exp2).append(")==0)");
+            else builder.append(exp1).append("!=").append(exp2);
         }
         else if(operationType == BinaryOperation.BinaryOperationType.AndOp)
         {

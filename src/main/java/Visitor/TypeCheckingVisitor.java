@@ -365,7 +365,7 @@ public class TypeCheckingVisitor implements Visitor {
             binaryOperation.setNodeType(nodeType);
             return nodeType;
         }
-        else if(operationType == BinaryOperation.BinaryOperationType.EQOp)
+        else if(operationType == BinaryOperation.BinaryOperationType.EQOp || operationType == BinaryOperation.BinaryOperationType.NEOp)
         {
             int row = CompatibilityType.getIndexFor(typeOP1);
             int col = CompatibilityType.getIndexFor(typeOP2);
