@@ -1,0 +1,230 @@
+#*
+si sviluppi e compili anche il programma MyFun che svolga (a richiesta tramite menu)
+1. la somma di due numeri
+2. la moltiplicazione di due numeri utilizzando la somma
+3. la divisione intera fra due numeri positivi
+4. l’elevamento a potenza
+5. la successione di Fibonacci
+#
+
+
+
+#funzione che effettua la somma
+fun somma(integer x, integer y): integer
+integer output := 0, i := 0;
+
+
+
+while i<2 loop
+
+
+
+if i = 0 then
+output := output + x;
+else
+output := output + y;
+end if;
+
+
+
+i := i + 1;
+end loop;
+
+
+
+return output;
+end fun;
+
+
+
+#funzione che calcola la moltiplicazione in manieria ricorsiva
+fun molt(integer x, integer y): integer
+
+
+
+if y = 1 then
+return x;
+else
+return somma(x , molt(x , y - 1) );
+end if;
+
+
+
+end fun;
+
+
+
+#elevamento a potenza, il risultato è tornato in formato stringa
+fun pot(integer x, integer y, out string result)
+
+
+
+result := x & "^" & y & "=" & x ^ y;
+
+
+
+end fun;
+
+
+
+#la divisione intera fra due numeri positivi
+fun divInt (integer x, integer y, out integer output): bool
+
+
+
+#se i numero in input sono negativi li si converte in positivi
+if x < 0 then
+x := -x;
+end if;
+
+
+
+if y < 0 then
+y := -y;
+end if;
+
+
+
+if y = 0 then
+?. "impossibile dividere per zero.";
+return false;
+end if;
+
+
+
+output := x div y;
+return true;
+end fun;
+
+
+
+#la successione di Fibonacci
+fun fibonacci (integer n, out integer output): bool
+var penultimo := 0, flag := false, ultimo := 1, i := 2;
+integer f;
+
+
+
+if n = 0 then
+output := 0;
+flag := true;
+end if;
+
+
+
+if n = 1 then
+output := 1;
+flag := true;
+end if;
+
+
+
+if n > 1 then
+while i <= n loop
+f := somma(penultimo,ultimo);
+penultimo := ultimo;
+ultimo := f;
+i := i + 1;
+end loop;
+
+
+
+output := f;
+flag := true;
+end if;
+
+
+
+if n < 0 then
+?. "Errore! " & n & " e' infieriore a 0";
+flag := false;
+end if;
+
+
+
+return flag;
+end fun;
+
+
+
+
+
+main
+integer resultFibo, resultDivInt, operando1, operando2, operazioneScelta;
+string resultPot, ans:='si';
+
+
+
+while ans = 'si' loop
+?. "Operazioni disponibili:";
+?. '1 - somma';
+?. '2 - moltiplicazione';
+?. '3 - potenza';
+?. '4 - divisione intera numeri positivi';
+?. '5 - fibonacci';
+
+
+
+% operazioneScelta "inserire un numero da 1 a 5:";
+
+
+
+while operazioneScelta < 1 or operazioneScelta > 5 loop
+% operazioneScelta 'errore... inserire una scelta valida:';
+end loop;
+
+
+
+
+
+if operazioneScelta <> 5 then
+% operando1 'inserire il primo operando:';
+% operando2 'inserire il secondo operando:';
+else
+% operando1 'inserire n:';
+end if;
+
+
+
+if operazioneScelta = 1 then
+?. operando1 & " + " & operando2 & " = " & somma(operando1, operando2);
+end if;
+
+
+
+if operazioneScelta = 2 then
+?. operando1 & " * " & operando2 & " = " & molt(operando1, operando2);
+end if;
+
+
+
+if operazioneScelta = 3 then
+pot(operando1, operando2, @resultPot);
+?. resultPot;
+end if;
+
+
+
+if operazioneScelta = 4 then
+if(divInt(operando1, operando2, @resultDivInt)) then
+?. operando1 & " divInt " & operando2 & " = " & resultDivInt;
+end if;
+end if;
+
+
+
+if operazioneScelta = 5 then
+if(fibonacci(operando1, @resultFibo)) then
+?. "fibonacci(" & operando1 & ") = " & resultFibo;
+end if;
+end if;
+
+
+
+% ans 'vuoi continuare? (si/no):\t';
+end loop;
+
+
+
+?. "fine.";
+end main;

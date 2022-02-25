@@ -1,0 +1,19 @@
+#programma che stampa le tabelline
+
+fun stampatab(string messaggio)
+?: messaggio;
+end fun;
+
+main
+integer i, j;
+i := 1;
+while i <= 10 loop
+j := 1;
+while j <= 10 loop
+stampatab( '' & (i*j));
+j := j + 1;
+end loop;
+?. '';
+i := i + 1;
+end loop;
+end main;
